@@ -1,1 +1,1 @@
-# speech-music-detection
+# Speech & Music Detection
