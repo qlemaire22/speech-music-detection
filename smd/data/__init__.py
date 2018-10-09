@@ -1,0 +1,5 @@
+""" Module for all functions related to data """
+
+from smd.data import preprocessing
+from smd.data import data_augmentation
+from smd.data import data_generator

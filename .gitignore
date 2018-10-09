@@ -106,3 +106,8 @@ venv.bak/
 # custom
 
 *temp.py
+*.pth
+*.ckpt
+*.pyc
+*.pth
+.DS_Store
