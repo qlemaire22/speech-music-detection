@@ -3,7 +3,9 @@
 
   },
   "ofai": {
-
+    "data_folder": "ofai/audio",
+    "filelists_folder": "ofai/filelists",
+    "type": "mixed"
   },
   "sveriges_radio": {
 
@@ -18,6 +20,6 @@
 
   },
   "klaus_seyerlehner": {
-    
+
   }
 }

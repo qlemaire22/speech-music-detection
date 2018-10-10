@@ -3,8 +3,8 @@ import numpy as np
 
 
 class DataGenerator(keras.utils.Sequence):
-    def __init__(self, ids, batch_size, shuffle=True):
-        self.ids = ids
+    def __init__(self, dataset, batch_size, shuffle=True):
+        self.dataset = dataset
         self.indices = np.arange(len(self.ids))
         self.batch_size = batch_size
         self.shuffle = shuffle
@@ -22,3 +22,6 @@ class DataGenerator(keras.utils.Sequence):
     def on_epoch_end(self):
         if self.shuffle:
             np.random.shuffle(self.indices)
+
+    def data_augmentation(filename):
+        None
