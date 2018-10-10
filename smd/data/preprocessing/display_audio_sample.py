@@ -26,7 +26,7 @@ def display_spectrogram():
     plt.subplot(3, 1, 2)
     librosa.display.waveplot(y)
     plt.title(os.path.basename(AUDIO_FILE_PATH))
-    # plt.show()
+    plt.show()
 
     S_temp = librosa.core.stft(y)
 
@@ -40,7 +40,7 @@ def display_spectrogram():
     plt.colorbar(format='%+2.0f dB')
     plt.title('Log-scale Mel spectrogram')
     plt.tight_layout()
-    # plt.show()
+    plt.show()
 
     duration = librosa.get_duration(y)
     print("Loading duration: " + repr(t1 - t0) + "s")

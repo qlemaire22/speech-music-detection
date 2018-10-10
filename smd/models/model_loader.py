@@ -1,5 +1,5 @@
-from b_lstm import create_b_lstm
-import config
+from smd.models import config
+from smd.models.b_lstm import create_b_lstm
 from keras import optimizers
 
 

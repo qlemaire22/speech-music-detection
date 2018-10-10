@@ -7,7 +7,7 @@ import json
 
 def train(train_set, val_set, cfg):
     model = load_model(cfg["model"])
-    
+
     model.fit_generator(train_set,
                         epochs=cfg["nb_epoch"],
                         callbacks=None,
@@ -38,6 +38,5 @@ if __name__ == "__main__":
 
     train_set = DataGenerator(dataset.get_train_set(), cfg["batch_size"])
     val_set = DataGenerator(dataset.get_val_set(), cfg["batch_size"])
-    # BATCH SIZE VAL ?
 
     train(train_set, val_set, cfg)

@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Bidirectional, TimeDistributed
 import smd.data.preprocessing.config
-import config
+from smd.models import config
 
 
 def create_b_lstm(hidden_units=[100, 100, 100], dropout=0.2):
