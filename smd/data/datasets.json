@@ -4,8 +4,7 @@
   },
   "ofai": {
     "data_folder": "ofai/audio",
-    "filelists_folder": "ofai/filelists",
-    "type": "mixed"
+    "filelists_folder": "ofai/filelists"
   },
   "sveriges_radio": {
 

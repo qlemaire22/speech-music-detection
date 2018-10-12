@@ -5,8 +5,20 @@ from smd.models.model_loader import load_model
 import json
 
 
+"""
+TODO:
+    - save the network
+    - implement callbacks
+    - possibility to start the training once again
+"""
+
+
 def train(train_set, val_set, cfg):
+    print("Loading the network..")
+
     model = load_model(cfg["model"])
+
+    print("Start the training..")
 
     model.fit_generator(train_set,
                         epochs=cfg["nb_epoch"],
@@ -34,7 +46,11 @@ if __name__ == "__main__":
         data = json.load(f)
         cfg = data[args.config]
 
-    dataset = DatasetLoader(cfg["dataset"])
+    print("Creating the dataset..")
+
+    dataset = DatasetLoader(cfg["dataset"], cfg["dataset_folder"])
+
+    print("Creating the data generator..")
 
     train_set = DataGenerator(dataset.get_train_set(), cfg["batch_size"])
     val_set = DataGenerator(dataset.get_val_set(), cfg["batch_size"])
