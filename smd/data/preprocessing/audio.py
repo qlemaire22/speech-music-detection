@@ -20,6 +20,10 @@ def log_melspectrogram(audio):
     return logS
 
 
+def normalization(spec, mean, std):
+    return (spec - mean) / std
+
+
 def save_spec(spec, filename, dst):
     path = os.path.join(dst, filename)
     np.save(path, spec)
