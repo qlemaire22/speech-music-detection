@@ -38,6 +38,16 @@ TODO: Packages used
 
 #### B-ConvLSTM
 
+    "model": {
+      "type": "bconvlstm",
+      "filters_list": [50, 50],
+      "kernel_size_list": [3, 3],
+      "stride_list": [(1, 1), (1, 1)],
+      "dilation_rate_list": [(1, 1), (1, 1)],
+      "dropout": 0.2,
+      "optimizer": ...
+    }
+
 #### TCN
 
     "model": {
