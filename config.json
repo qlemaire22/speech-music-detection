@@ -4,10 +4,12 @@
       "type": "blstm",
       "hidden_units": [100, 100, 100],
       "dropout": 0.2,
-      "optimizer": "SGD",
-      "lr": 0.001,
-      "momentum": 0.9,
-      "decay": 1e-6
+      "optimizer": {
+        "name": "SGD",
+        "lr": 0.001,
+        "momentum": 0.9,
+        "decay": 1e-6
+      }
     },
     "dataset": [
       "ofai"

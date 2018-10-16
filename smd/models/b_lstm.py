@@ -4,15 +4,15 @@ import smd.data.preprocessing.config
 from smd.models import config
 
 
-def create_b_lstm(hidden_units=[100, 100, 100], dropout=0.2):
+def create_b_lstm(hidden_units, dropout=0.05):
     model = Sequential()
 
     i = 0
     for unit in hidden_units:
         if i == 0:
-            model.add(Bidirectional(LSTM(unit, dropout=0.2, return_sequences=True)), input_shape=(None, smd.data.preprocessing.config.N_MELS))
+            model.add(Bidirectional(LSTM(unit, dropout=dropout, return_sequences=True)), input_shape=(None, smd.data.preprocessing.config.N_MELS))
         else:
-            model.add(Bidirectional(LSTM(unit, dropout=0.2, return_sequences=True)))
+            model.add(Bidirectional(LSTM(unit, dropout=dropout, return_sequences=True)))
         i += 1
 
     model.add(TimeDistributed(Dense(config.CLASSES, activation='sigmoid')))
