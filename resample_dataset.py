@@ -57,6 +57,8 @@ def resample_dataset(dataset_folder, dataset):
     mean = np.zeros(audio_config.N_MELS)
     std = np.zeros(audio_config.N_MELS)
 
+    # specs = []
+
     for file in tqdm(audio_files[:2]):
         basename = os.path.basename(file)
         new_file = os.path.join(NEW_DATA_PATH, basename).replace(
@@ -84,6 +86,18 @@ def resample_dataset(dataset_folder, dataset):
             delta2 = spec - mean[:, None]
             std += np.sum(delta1 * delta2, axis=1)
 
+        # audio = preprocessing.load_audio(file)
+        # specs.append(preprocessing.get_log_melspectrogram(audio))
+
+    std /= (n - 1)
+    std = np.sqrt(std)
+
+    # spec = np.concatenate((specs[0], specs[1]), axis=1)
+    # spec = preprocessing.normalize(spec, mean, std)
+
+    # print(np.mean(np.mean(spec, axis=1)))
+    # print(np.mean(np.std(spec, axis=1)))
+
     infos = {
         "TOTAL_LENGTH": n,
         "N_MELS": audio_config.N_MELS,
@@ -94,8 +108,8 @@ def resample_dataset(dataset_folder, dataset):
         "F_MAX": audio_config.F_MAX,
         "AUDIO_MAX_LENGTH": audio_config.AUDIO_MAX_LENGTH
     }
-    np.save(os.path.join(NEW_FILELISTS_FOLDER, "mean.npy"), mean)
-    np.save(os.path.join(NEW_FILELISTS_FOLDER, "std.npy"), std)
+    np.save(os.path.join(NEW_FILELISTS_FOLDER, "bands_mean.npy"), mean)
+    np.save(os.path.join(NEW_FILELISTS_FOLDER, "bands_std.npy"), std)
     with open(os.path.join(NEW_FILELISTS_FOLDER, "info.json"), 'w') as f:
         json.dump(infos, f)
 
@@ -147,7 +161,7 @@ def run_sox(input_file, output_file, sampling_rate, max_length):
 
 def librosa_analysis(file):
     audio = preprocessing.load_audio(file)
-    spec = preprocessing.log_melspectrogram(audio)
+    spec = preprocessing.get_log_melspectrogram(audio)
 
     length = spec.shape[1]
 

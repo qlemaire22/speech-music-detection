@@ -24,4 +24,12 @@ class DataGenerator(keras.utils.Sequence):
             np.random.shuffle(self.indices)
 
     def data_augmentation(filename):
+        # load spec
+
+        # get spec
+
+        # transfo
+
+        # get mel
+
         None
