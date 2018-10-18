@@ -13,7 +13,8 @@ The SoX command line utility is required ([HomePage](http://sox.sourceforge.net)
 
 Installation with HomeBrew:
 
-    brew install sox
+    brew install lame
+    brew reinstall sox --with-lame  # for mp3 compatibility
 
 Installation of the Python packages with PyPi:
 
@@ -23,7 +24,30 @@ TODO: Packages used
 
 ## Data
 
+### Pre-processing
+
+#### Configuration
+
+The different parameters of the pre-processing can changed in the file `smd/data/preprocessing/config.py`.
+
+### Data Augmentation
+
+Different transformations are applied to each training sample to do some data augmentation. The implemented transformations are:
+
+- Time stretching
+- Pitch shifting
+- Dynamic range compression
+- Gain changement
+- Block mixing
+- Background noise
+
+#### Configuration
+
+The different parameters of the data augmentation can changed in the file `smd/data/data_augmentation/config.py`.
+
 ## Configuration
+
+You can configure the model and the parameters of the training in the file `config.json`. Different models and optimizers can be choosen for this task.
 
 ### Models
 

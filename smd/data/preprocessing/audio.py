@@ -15,8 +15,8 @@ def load_audio(filename, duration=None):
 
 
 def log_melspectrogram(audio):
-    S = librosa.feature.melspectrogram(y=audio, n_mels=config.N_MELS, f_min=config.F_MIN, f_max=config.F_MAX)
-    logS = librosa.power_to_db(S)
+    S = librosa.feature.melspectrogram(y=audio, n_mels=config.N_MELS, fmin=config.F_MIN, fmax=config.F_MAX)
+    logS = np.log1p(np.maximum(S, 0))
     return logS
 
 

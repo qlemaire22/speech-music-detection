@@ -38,7 +38,7 @@ if __name__ == "__main__":
                         help='the configuration of the training')
 
     parser.add_argument('--data_location', type=str, default="/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
-                        help='the locaftion of the data')
+                        help='the location of the data')
 
     args = parser.parse_args()
 
