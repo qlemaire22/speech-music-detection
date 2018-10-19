@@ -10,11 +10,6 @@ librosa['hop_length'] = config.HOP_LENGTH
 librosa['n_fft'] = config.FFT_WINDOW_SIZE
 
 
-def load_audio(filename, duration=None):
-    """Load the audio file into a numpy array."""
-    return librosa.load(filename, duration=duration)[0]
-
-
 def get_spectrogram(audio):
     """Return the power magnitude spectrogram of the audio."""
     return np.abs(librosa.stft(audio))**2

@@ -1,6 +1,6 @@
 # Speech & Music Detection
 
-# !!! Still in development !!!
+# ! Still in development, not yet working !
 
 ## Task
 

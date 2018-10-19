@@ -1,6 +1,10 @@
 import os
 import numpy as np
 import json
+import csv
+import math
+import smd.config as config
+import librosa
 
 
 def read_filelists(folder):
@@ -27,9 +31,26 @@ def read_filelists(folder):
     return dic
 
 
-def save_matrix(spec, filename, dst):
+def read_annotation(filename):
+    events = []
+    with open(filename, 'r') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter='\t', quotechar='|')
+        for row in spamreader:
+            events.append(row)
+    return events
+
+
+def load_audio(filename, duration=None):
+    """Load the audio file into a numpy array."""
+    return librosa.load(filename, sr=None, duration=duration)[0]
+
+
+def save_matrix(spec, filename, dst=None):
     """Save a matrix into a .npy file"""
-    path = os.path.join(dst, filename)
+    if dst is None:
+        path = filename
+    else:
+        path = os.path.join(dst, filename)
     np.save(path, spec)
 
 
@@ -59,3 +80,8 @@ def load_json(filename):
     with open(filename) as f:
         data = json.load(f)
     return data
+
+
+def duration_to_frame_count(duration):
+    """Return the number of frame for a duration in s."""
+    return math.ceil(duration * config.SAMPLING_RATE / config.HOP_LENGTH)

@@ -47,7 +47,8 @@ if __name__ == "__main__":
 
     print("Creating the dataset..")
 
-    dataset = DatasetLoader(cfg["dataset"], cfg["dataset_folder"])
+    datasets_config = utils.load_json("datasets.json")
+    dataset = DatasetLoader(cfg["dataset"], cfg["dataset_folder"], datasets_config)
 
     print("Creating the data generator..")
 

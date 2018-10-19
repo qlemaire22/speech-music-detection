@@ -1,14 +1,10 @@
-import smd.utils as utils
 import os
 import glob
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-
 
 class DatasetLoader():
-    def __init__(self, datasets, dataset_folder):
-        path = os.path.join(dir_path, 'datasets.json')
-        self.cfg = utils.load_json(path)
+    def __init__(self, datasets, dataset_folder, datasets_config):
+        self.cfg = datasets_config
 
         self.train_set = {"mixed": [],
                           "music": [],
