@@ -1,14 +1,13 @@
 from tcn import TCN
 from keras.models import Input, Model
 from keras.layers import Dense, Activation
-from smd.models import config
-import smd.data.preprocessing.config
+from smd import config
 
 
 def create_tcn(nb_filters, kernel_size, dilations, nb_stacks, activation='norm_relu', use_skip_connections=True, dropout_rate=0.05):
     dilations = TCN.process_dilations(dilations)
 
-    input_layer = Input(shape=(None, smd.data.preprocessing.config.N_MELS))
+    input_layer = Input(shape=(None, config.N_MELS))
 
     x = TCN.TCN(nb_filters, kernel_size, nb_stacks, dilations, activation,
                 use_skip_connections, dropout_rate, return_sequences=True)(input_layer)

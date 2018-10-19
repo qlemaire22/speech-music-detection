@@ -2,7 +2,7 @@ import argparse
 from smd.data.data_generator import DataGenerator
 from smd.data.dataset_loader import DatasetLoader
 from smd.models.model_loader import load_model
-import json
+import smd.utils as utils
 
 
 """
@@ -42,9 +42,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    with open('config.json') as f:
-        data = json.load(f)
-        cfg = data[args.config]
+    experiments = utils.load_json('experiments.json')
+    cfg = experiments[args.config]
 
     print("Creating the dataset..")
 

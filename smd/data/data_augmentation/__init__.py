@@ -1,7 +1,5 @@
-from smd.data.data_augmentation.background_noise import *
-from smd.data.data_augmentation.block_mixing import *
-from smd.data.data_augmentation.dynamic_range_compression import *
-from smd.data.data_augmentation.pitch_shifting import *
-from smd.data.data_augmentation.time_stretching import *
-from smd.data.data_augmentation.gain_changement import *
-import smd.data.data_augmentation.config
+from smd.data.data_augmentation.noise import *
+from smd.data.data_augmentation.mixing import *
+from smd.data.data_augmentation.filter import *
+from smd.data.data_augmentation.pitch_time import *
+from smd.data.data_augmentation.loudness import *

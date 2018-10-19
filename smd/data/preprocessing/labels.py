@@ -1,11 +1,10 @@
 import numpy as np
 import csv
-from smd.data.preprocessing import config
-import os
+from smd import config
 
 
 def get_label(type, n_frame, filename=None, stretching_rate=1):
-    r"""Generate the formatted label of an audio sample.
+    r"""Generate the label matrix of an audio sample based on its annotations.
 
     Keyword arguments:
 
@@ -47,6 +46,7 @@ def get_label(type, n_frame, filename=None, stretching_rate=1):
 
 
 def get_annotation(label):
+    """Return the formatted annotations based on the label matrix."""
     t1_music = -1
     t1_speech = -1
     t2_music = -1
@@ -75,22 +75,12 @@ def get_annotation(label):
 
 
 def time_to_frame(time):
+    """Return the number of the frame corresponding to a timestamp."""
     n_frame = round(time / config.HOP_LENGTH * config.SAMPLING_RATE)
     return n_frame
 
 
 def frame_to_time(n_frame):
+    """Return the timestamp corresponding to a frame."""
     time = n_frame / config.SAMPLING_RATE * config.HOP_LENGTH
     return time
-
-
-def save_label(label, filename, dst):
-    path = os.path.join(dst, filename)
-    np.save(path, label)
-
-
-def save_annotation(events, filename, dst):
-    path = os.path.join(dst, filename)
-    with open(path, "w") as f:
-        for event in events:
-            f.write(str(event[0]) + '\t' + str(event[1]) + '\t' + event[2] + '\n')

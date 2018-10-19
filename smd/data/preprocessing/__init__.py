@@ -2,4 +2,3 @@
 
 from smd.data.preprocessing.audio import *
 from smd.data.preprocessing.labels import *
-import smd.data.preprocessing.config

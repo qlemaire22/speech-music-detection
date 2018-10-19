@@ -3,12 +3,12 @@ import os
 import glob
 from tqdm import tqdm
 from subprocess import Popen, PIPE
-import smd.data.preprocessing.config as audio_config
+import smd as audio_config
 import re
 import argparse
 import csv
-import smd.data.utils as utils
-import smd.data.preprocessing.audio as preprocessing
+import smd.utils as utils
+import smd.data.preprocessing as preprocessing
 import numpy as np
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -16,8 +16,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 def resample_dataset(dataset_folder, dataset):
     path = os.path.join(dir_path, 'smd/data/datasets.json')
-    with open(path) as f:
-        cfg = json.load(f)
+    cfg = utils.load_json(path)
 
     DATA_PATH = os.path.join(dataset_folder, cfg[dataset]["data_folder"])
     NEW_DATA_PATH = DATA_PATH + "_" + \
@@ -151,10 +150,8 @@ def run_sox(input_file, output_file, sampling_rate, max_length):
 
         new_annotation = files[i].replace(
             os.path.splitext(files[i])[1], '.txt')
-        with open(new_annotation, 'w') as f:
-            for event in valid_events:
-                f.write(str(event[0]) + '\t' +
-                        str(event[1]) + '\t' + event[2] + '\n')
+
+        utils.save_annotation(valid_events, new_annotation)
 
     return files
 

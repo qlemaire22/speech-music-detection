@@ -1,4 +1,4 @@
-from smd.models import config
+from smd import config
 from smd.models.b_lstm import create_b_lstm
 from smd.models.tcn import create_tcn
 from smd.models.b_conv_lstm import create_b_conv_lstm
