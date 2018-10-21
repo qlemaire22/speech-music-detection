@@ -11,9 +11,11 @@ import argparse
 import smd.utils as utils
 import smd.data.preprocessing as preprocessing
 import numpy as np
+import librosa
 
 
-# save spec
+# n by type train test vals
+# mean var over train only
 
 
 def resample_dataset(dataset_folder, dataset):
@@ -53,13 +55,13 @@ def resample_dataset(dataset_folder, dataset):
 
     filelists = utils.read_filelists(FILELISTS_FOLDER)
 
-    n = 0
+    n, n_mixed, n_music, n_speech, n_noise, n_val, n_test, n_tot = 0
     mean = np.zeros(audio_config.N_MELS)
-    std = np.zeros(audio_config.N_MELS)
+    var = np.zeros(audio_config.N_MELS)
 
     # specs = []
 
-    for file in tqdm(audio_files[:2]):
+    for file in tqdm(audio_files):
         basename = os.path.basename(file)
         new_file = os.path.join(NEW_DATA_PATH, basename).replace(
             os.path.splitext(file)[1], '.wav')
@@ -76,30 +78,53 @@ def resample_dataset(dataset_folder, dataset):
         for new_file in new_files:
             for key in filelists.keys():
                 if basename in filelists[key]:
+                    audio_type, set_type = key.split('_')
                     with open(os.path.join(NEW_FILELISTS_FOLDER, key), 'w') as f:
                         f.write(os.path.basename(new_file) + '\n')
 
-            length, bands = librosa_analysis(new_file)
-            n += length
-            delta1 = bands - mean[:, None]
-            mean += np.sum(delta1, axis=1) / n
-            delta2 = bands - mean[:, None]
-            std += np.sum(delta1 * delta2, axis=1)
-
+            if set_type == 'train':
+                length, bands = librosa_analysis(new_file)
+                n += length
+                n_tot += length
+                delta1 = bands - mean[:, None]
+                mean += np.sum(delta1, axis=1) / n
+                delta2 = bands - mean[:, None]
+                var += np.sum(delta1 * delta2, axis=1)
+                if audio_type == "mixed":
+                    n_mixed += length
+                elif audio_type == "speech":
+                    n_speech += length
+                elif audio_type == "music":
+                    n_music += length
+                elif audio_type == "noise":
+                    n_noise += length
+            elif set_type == 'val':
+                length = utils.duration_to_frame_count(librosa.get_duration(filename=new_file))
+                n_tot += length
+                n_val += length
+            elif set_type == 'test':
+                n_tot += length
+                n_test += length
         # audio = preprocessing.load_audio(file)
         # specs.append(preprocessing.get_log_melspectrogram(audio))
 
-    std /= (n - 1)
-    std = np.sqrt(std)
+    var /= (n - 1)
 
     # spec = np.concatenate((specs[0], specs[1]), axis=1)
-    # spec = preprocessing.normalize(spec, mean, std)
+    # spec = preprocessing.normalize(spec, mean, np.sqrt(var))
 
     # print(np.mean(np.mean(spec, axis=1)))
-    # print(np.mean(np.std(spec, axis=1)))
+    # print(np.mean(np.var(spec, axis=1)))
 
     infos = {
-        "TOTAL_LENGTH": n,
+        "N_FRAME_TOT": n_tot,
+        "N_FRAME_TRAIN": n,
+        "N_FRAME_VAL": n_val,
+        "N_FRAME_TEST": n_test,
+        "N_FRAME_TRAIN_MIXED": n_mixed,
+        "N_FRAME_TRAIN_SPEECH": n_speech,
+        "N_FRAME_TRAIN_MUSIC": n_music,
+        "N_FRAME_TRAIN_NOISE": n_noise,
         "N_MELS": audio_config.N_MELS,
         "SAMPLING_RATE": audio_config.SAMPLING_RATE,
         "FFT_WINDOW_SIZE": audio_config.FFT_WINDOW_SIZE,
@@ -108,8 +133,8 @@ def resample_dataset(dataset_folder, dataset):
         "F_MAX": audio_config.F_MAX,
         "AUDIO_MAX_LENGTH": audio_config.AUDIO_MAX_LENGTH
     }
-    np.save(os.path.join(NEW_FILELISTS_FOLDER, "bands_mean.npy"), mean)
-    np.save(os.path.join(NEW_FILELISTS_FOLDER, "bands_std.npy"), std)
+    np.save(os.path.join(NEW_FILELISTS_FOLDER, "mean.npy"), mean)
+    np.save(os.path.join(NEW_FILELISTS_FOLDER, "var.npy"), var)
     with open(os.path.join(NEW_FILELISTS_FOLDER, "info.json"), 'w') as f:
         json.dump(infos, f)
 

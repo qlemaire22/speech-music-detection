@@ -21,6 +21,8 @@ Installation of the Python packages with PyPi:
 
 TODO: Packages used
 
+To listen to the audio while vizualizing the annotations with `smd.display.audio_with_events`, you need the toolbox `sed_vis` that you can download on [GitHub](https://github.com/TUT-ARG/sed_vis).
+
 ## Data
 
 The different parameters of the data pre-processing or of the data augmentation can be changed in `smd/config.py`.

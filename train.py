@@ -10,6 +10,7 @@ TODO:
     - save the network
     - implement callbacks
     - possibility to start the training once again
+    - lr schedule
 """
 
 
