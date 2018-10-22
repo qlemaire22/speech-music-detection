@@ -7,16 +7,16 @@ from keras import optimizers
 
 def load_model(cfg):
 
-    if cfg["model"] == "blstm":
+    if cfg["type"] == "blstm":
         model = create_b_lstm(hidden_units=cfg["hidden_units"],
                               dropout=cfg["dropout"])
-    elif cfg["model"] == "bconvlstm":
+    elif cfg["type"] == "bconvlstm":
         model = create_b_conv_lstm(cfg["filters_list"],
                                    cfg["kernel_size_list"],
                                    cfg["stride_list"],
                                    cfg["dilation_rate_list"],
                                    cfg["dropout"])
-    elif cfg["model"] == "tcn":
+    elif cfg["type"] == "tcn":
         model = create_tcn(nb_filters=cfg["nb_filters"],
                            kernel_size=cfg["kernel_size"],
                            dilations=cfg["dilations"],
@@ -37,5 +37,5 @@ def load_model(cfg):
 
     model.compile(optimizer, loss=config.LOSS, metrics=config.METRICS)
 
-    print(model.summary())
+    model.summary()
     return model

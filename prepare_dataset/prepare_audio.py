@@ -55,13 +55,13 @@ def resample_dataset(dataset_folder, dataset):
 
     filelists = utils.read_filelists(FILELISTS_FOLDER)
 
-    n, n_mixed, n_music, n_speech, n_noise, n_val, n_test, n_tot = 0
+    n, n_mixed, n_music, n_speech, n_noise, n_val, n_test, n_tot = 0, 0, 0, 0, 0, 0, 0, 0
     mean = np.zeros(audio_config.N_MELS)
     var = np.zeros(audio_config.N_MELS)
 
     # specs = []
 
-    for file in tqdm(audio_files):
+    for file in tqdm(audio_files[:10]):
         basename = os.path.basename(file)
         new_file = os.path.join(NEW_DATA_PATH, basename).replace(
             os.path.splitext(file)[1], '.wav')
@@ -69,42 +69,38 @@ def resample_dataset(dataset_folder, dataset):
                             audio_config.SAMPLING_RATE, audio_config.AUDIO_MAX_LENGTH)
         new_audio_files += new_files
 
-        for key in filelists.keys():
-            if basename in filelists[key]:
-                with open(os.path.join(NEW_FILELISTS_FOLDER, key), 'w') as f:
-                    for new_file in new_files:
-                        f.write(os.path.basename(new_file) + '\n')
-
         for new_file in new_files:
             for key in filelists.keys():
                 if basename in filelists[key]:
                     audio_type, set_type = key.split('_')
-                    with open(os.path.join(NEW_FILELISTS_FOLDER, key), 'w') as f:
-                        f.write(os.path.basename(new_file) + '\n')
 
-            if set_type == 'train':
-                length, bands = librosa_analysis(new_file)
-                n += length
-                n_tot += length
-                delta1 = bands - mean[:, None]
-                mean += np.sum(delta1, axis=1) / n
-                delta2 = bands - mean[:, None]
-                var += np.sum(delta1 * delta2, axis=1)
-                if audio_type == "mixed":
-                    n_mixed += length
-                elif audio_type == "speech":
-                    n_speech += length
-                elif audio_type == "music":
-                    n_music += length
-                elif audio_type == "noise":
-                    n_noise += length
-            elif set_type == 'val':
-                length = utils.duration_to_frame_count(librosa.get_duration(filename=new_file))
-                n_tot += length
-                n_val += length
-            elif set_type == 'test':
-                n_tot += length
-                n_test += length
+                    if set_type == 'train':
+                        length, bands = savespec_and_get_bands(new_file)
+                        n += length
+                        n_tot += length
+                        delta1 = bands - mean[:, None]
+                        mean += np.sum(delta1, axis=1) / n
+                        delta2 = bands - mean[:, None]
+                        var += np.sum(delta1 * delta2, axis=1)
+                        if audio_type == "mixed":
+                            n_mixed += length
+                        elif audio_type == "speech":
+                            n_speech += length
+                        elif audio_type == "music":
+                            n_music += length
+                        elif audio_type == "noise":
+                            n_noise += length
+                    elif set_type == 'val':
+                        length = savespec(new_file)
+                        n_tot += length
+                        n_val += length
+                    elif set_type == 'test':
+                        length = savespec(new_file)
+                        n_tot += length
+                        n_test += length
+
+                    with open(os.path.join(NEW_FILELISTS_FOLDER, key), 'a') as f:
+                        f.write(os.path.basename(new_file).replace(".wav", '') + '\t' + str(length) + '\n')
         # audio = preprocessing.load_audio(file)
         # specs.append(preprocessing.get_log_melspectrogram(audio))
 
@@ -185,7 +181,7 @@ def run_sox(input_file, output_file, sampling_rate, max_length):
     return files
 
 
-def librosa_analysis(file):
+def savespec_and_get_bands(file):
     audio = utils.load_audio(file)
 
     spec = preprocessing.get_spectrogram(audio)
@@ -194,6 +190,16 @@ def librosa_analysis(file):
     length = bands.shape[1]
     utils.save_matrix(spec, file.replace(".wav", ''))
     return length, bands
+
+
+def savespec(file):
+    audio = utils.load_audio(file)
+
+    spec = preprocessing.get_spectrogram(audio)
+
+    length = spec.shape[1]
+    utils.save_matrix(spec, file.replace(".wav", ''))
+    return length
 
 
 if __name__ == '__main__':

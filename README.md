@@ -62,8 +62,8 @@ You can configure the model and the parameters of the training in the file `expe
       "type": "bconvlstm",
       "filters_list": [50, 50],
       "kernel_size_list": [3, 3],
-      "stride_list": [(1, 1), (1, 1)],
-      "dilation_rate_list": [(1, 1), (1, 1)],
+      "stride_list": [1, 1],
+      "dilation_rate_list": [1, 1],
       "dropout": 0.2,
       "optimizer": ...
     }
@@ -76,7 +76,7 @@ You can configure the model and the parameters of the training in the file `expe
       "kernel_size": 4,
       "dilations": [1, 2, 4, 8],
       "nb_stacks": 3,
-      "activation"= "norm_relu",
+      "activation": "norm_relu",
       "use_skip_connections": true,
       "dropout_rate": 0.05,
       "optimizer": ...

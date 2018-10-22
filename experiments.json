@@ -2,21 +2,71 @@
   "test1": {
     "model": {
       "type": "blstm",
-      "hidden_units": [100, 100, 100],
+      "hidden_units": [100],
       "dropout": 0.2,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
         "momentum": 0.9,
-        "decay": 1e-6
+        "decay": 0
       }
     },
     "dataset": [
       "ofai"
     ],
-    "dataset_folder": "/Users/quentin/Computer/DataSet/Music/speech_music_detection",
     "batch_size": 32,
-    "nb_epoch": 50,
+    "nb_epoch": 10,
+    "target_seq_length": 300,
+    "workers": 1,
+    "use_multiprocessing": false
+  },
+  "test2": {
+    "model": {
+      "type": "bconvlstm",
+      "filters_list": [5, 5],
+      "kernel_size_list": [3, 3],
+      "stride_list": [1, 1],
+      "dilation_rate_list": [1, 1],
+      "dropout": 0.2,
+      "optimizer": {
+        "name": "SGD",
+        "lr": 0.001,
+        "momentum": 0.9,
+        "decay": 0
+      }
+    },
+    "dataset": [
+      "ofai"
+    ],
+    "batch_size": 32,
+    "nb_epoch": 10,
+    "target_seq_length": 300,
+    "workers": 1,
+    "use_multiprocessing": false
+  },
+  "test3": {
+    "model": {
+      "type": "tcn",
+      "nb_filters": 32,
+      "kernel_size": 4,
+      "dilations": [1, 2, 4, 8],
+      "nb_stacks": 3,
+      "activation": "norm_relu",
+      "use_skip_connections": true,
+      "dropout_rate": 0.05,
+      "optimizer": {
+        "name": "SGD",
+        "lr": 0.001,
+        "momentum": 0.9,
+        "decay": 0
+      }
+    },
+    "dataset": [
+      "ofai"
+    ],
+    "batch_size": 32,
+    "nb_epoch": 10,
+    "target_seq_length": 300,
     "workers": 1,
     "use_multiprocessing": false
   }

@@ -6,7 +6,7 @@ HOP_LENGTH = 512
 N_MELS = 100
 F_MIN = 27.5
 F_MAX = 8000
-AUDIO_MAX_LENGTH = 10 * 60  # in seconds
+AUDIO_MAX_LENGTH = 100  # in seconds
 
 # Data augmentation config
 
@@ -25,5 +25,5 @@ BLOCK_MIXING_MAX = 0.9
 # Model config
 
 LOSS = "binary_crossentropy"
-METRIC = ["categorical_accuracy"]
+METRICS = ["categorical_accuracy"]
 CLASSES = 2

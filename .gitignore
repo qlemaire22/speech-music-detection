@@ -111,3 +111,4 @@ venv.bak/
 *.pyc
 *.pth
 .DS_Store
+checkpoint/

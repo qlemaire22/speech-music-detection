@@ -2,6 +2,7 @@ import os
 import glob
 import smd.utils as utils
 import numpy as np
+import smd.config as config
 
 
 class DatasetLoader():
@@ -26,13 +27,14 @@ class DatasetLoader():
         self.test_set = {"mixed": [],
                          "n_frame": 0}
 
-        ns_val, ns_test, ns, ns_mixed, ns_speech, ns_music, ns_noise = []
+        ns_val, ns_test, ns, ns_mixed, ns_speech, ns_music, ns_noise = [], [], [], [], [], [], []
         ms = []
         vs = []
 
         for dataset in datasets:
-            filelist_path = os.path.join(dataset_folder, self.cfg[dataset]["filelists_folder"])
-            data_path = os.path.join(dataset_folder, self.cfg[dataset]["data_folder"])
+            suffix = '_' + str(config.SAMPLING_RATE) + '_' + str(config.AUDIO_MAX_LENGTH) + '_' + str(config.N_MELS)
+            filelist_path = os.path.join(dataset_folder, self.cfg[dataset]["filelists_folder"] + suffix)
+            data_path = os.path.join(dataset_folder, self.cfg[dataset]["data_folder"] + suffix)
 
             files = glob.glob(filelist_path + "/*")
 
@@ -96,17 +98,18 @@ class DatasetLoader():
         with open(filename, 'r') as f:
             files = f.readlines()
         for file in files:
-            data_list[label_type].append(os.path.join(data_path, file.replace('\n', '')))
+            filename, length = file.replace('\n', '').split('\t')
+            data_list[label_type].append((os.path.join(data_path, filename), length))
 
-    def combine_means(ms, ns):
-        a, b = None
+    def combine_means(self, ms, ns):
+        a, b = 0, 0
         for i in range(len(ms)):
             a += ns[i] * ms[i]
             b += ns[i]
         return a / b
 
-    def combine_var(vs, ns, ms, mc):
-        a, b = None
+    def combine_var(self, vs, ns, ms, mc):
+        a, b = 0, 0
         for i in range(len(vs)):
             a += ns[i] * (vs[i] + (ms[i] - mc)**2)
             b += ns[i]
