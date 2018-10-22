@@ -11,11 +11,6 @@ import argparse
 import smd.utils as utils
 import smd.data.preprocessing as preprocessing
 import numpy as np
-import librosa
-
-
-# n by type train test vals
-# mean var over train only
 
 
 def resample_dataset(dataset_folder, dataset):
