@@ -10,14 +10,9 @@ AUDIO_MAX_LENGTH = 100  # in seconds
 
 # Data augmentation config
 
-STRETCHING_MIN = 0.75
-STRETCHING_MAX = 1.25
-
-SHIFTING_MIN = -3.5
-SHIFTING_MAX = 3.5
-
-GAIN_MIN = 0.5
-GAIN_MAX = 1.5
+MAX_SHIFTING_PITCH = 0.3
+MAX_STRETCHING = 0.3
+MAX_LOUDNESS_DB = 10
 
 BLOCK_MIXING_MIN = 0.1
 BLOCK_MIXING_MAX = 0.9
@@ -27,3 +22,11 @@ BLOCK_MIXING_MAX = 0.9
 LOSS = "binary_crossentropy"
 METRICS = ["categorical_accuracy"]
 CLASSES = 2
+
+# For audio augmentation - deprecated
+
+STRETCHING_MIN = 0.75
+STRETCHING_MAX = 1.25
+
+SHIFTING_MIN = -3.5
+SHIFTING_MAX = 3.5

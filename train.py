@@ -2,6 +2,7 @@ import argparse
 from smd.data.data_generator import DataGenerator
 from smd.data.dataset_loader import DatasetLoader
 from smd.models.model_loader import load_model
+from smd.data.data_augmentation import random_loudness_spec, random_filter_spec, block_mixing_spec, pitch_time_deformation_spec
 from smd.data import preprocessing
 import smd.utils as utils
 import numpy as np
@@ -15,17 +16,27 @@ def training_data_processing(spec_file, annotation_file, mean, std, spec_file2=N
 
     # noise
 
-    # stretching, shifting
+    spec, stretching_rate = pitch_time_deformation_spec(spec)
+    spec = random_filter_spec(spec)
+    spec = random_loudness_spec(spec)
+    label = preprocessing.get_label(
+        annotation_file, spec.shape[1], stretching_rate=stretching_rate)
 
-    # random filters
+    if not(spec_file2 is None):
+        spec2 = np.load(spec_file2)
 
-    # random loudness
+        # noise
+
+        spec2, stretching_rate2 = pitch_time_deformation_spec(spec2)
+        spec2 = random_filter_spec(spec2)
+        spec2 = random_loudness_spec(spec2)
+        label2 = preprocessing.get_label(
+            annotation_file2, spec2.shape[1], stretching_rate=stretching_rate2)
+        spec, label = block_mixing_spec(spec, spec2, label, label2)
+        exit()
 
     mels = preprocessing.get_scaled_mel_bands(spec)
     mels = preprocessing.normalize(mels, mean, std)
-    n_frame = mels.shape[1]
-    label = preprocessing.get_label(
-        annotation_file, n_frame, stretching_rate=1)
     return mels, label
 
 
@@ -65,7 +76,7 @@ def train(train_set, val_set, cfg, config_name, resume, model_path):
                                    verbose=0, mode='auto')
 
     lr_schedule = ReduceLROnPlateau(
-        monitor='val_loss', factor=0.2, patience=1, verbose=1, mode='auto', min_lr=10e-7)
+        monitor='val_loss', factor=0.1, patience=1, verbose=1, mode='auto', min_lr=10e-7)
 
     callback_list = [save_ckpt, early_stopping, lr_schedule, csv_logger]
 

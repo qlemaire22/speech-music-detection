@@ -69,7 +69,7 @@ def label_to_annotation(label):
 def time_to_frame(time):
     """Return the number of the frame corresponding to a timestamp."""
     n_frame = round(time / config.HOP_LENGTH * config.SAMPLING_RATE)
-    return n_frame
+    return int(n_frame)
 
 
 def frame_to_time(n_frame):
