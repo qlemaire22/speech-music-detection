@@ -5,15 +5,9 @@ from smd.models.model_loader import load_model
 from smd.data import preprocessing
 import smd.utils as utils
 import numpy as np
-from keras.callbacks import ModelCheckpoint, CSVLogger, EarlyStopping, LearningRateScheduler
+from keras.callbacks import ModelCheckpoint, CSVLogger, EarlyStopping, ReduceLROnPlateau
+import keras.models
 import os
-
-
-"""
-TODO:
-    - possibility to start the training once again
-    scheduler
-"""
 
 
 def training_data_processing(spec_file, annotation_file, mean, std):
@@ -46,16 +40,20 @@ def validation_data_processing(spec_file, annotation_file, mean, std):
     return mels, label
 
 
-def train(train_set, val_set, cfg, config_name):
-    print("Loading the network..")
-
-    model = load_model(cfg["model"])
+def train(train_set, val_set, cfg, config_name, resume, model_path):
+    if resume:
+        print("Loading the model to resume..")
+        model = keras.models.load_model(model_path % config_name)
+    else:
+        print("Loading the network..")
+        model = load_model(cfg["model"])
 
     if not(os.path.isdir("checkpoint")):
         os.makedirs("checkpoint")
         print("Checkpoint folder created.")
 
-    csv_logger = CSVLogger('checkpoint/' + config_name + '-training.log', append=False)
+    csv_logger = CSVLogger('checkpoint/' + config_name +
+                           '-training.log', append=resume)
     save_ckpt = ModelCheckpoint("checkpoint/weights." + config_name + ".hdf5", monitor='val_loss',
                                 verbose=1,
                                 save_best_only=True,
@@ -63,12 +61,13 @@ def train(train_set, val_set, cfg, config_name):
 
     early_stopping = EarlyStopping(monitor='val_loss',
                                    min_delta=0,
-                                   patience=2,
+                                   patience=3,
                                    verbose=0, mode='auto')
 
-    # lr_schedule = LearningRateScheduler
+    lr_schedule = ReduceLROnPlateau(
+        monitor='val_loss', factor=0.2, patience=1, verbose=1, mode='auto', min_lr=10e-7)
 
-    callback_list = [save_ckpt, csv_logger, early_stopping]
+    callback_list = [save_ckpt, early_stopping, lr_schedule, csv_logger]
 
     print("Start the training..")
 
@@ -91,6 +90,12 @@ if __name__ == "__main__":
 
     parser.add_argument('--data_location', type=str, default="/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
                         help='the location of the data')
+
+    parser.add_argument('--resume', type=bool, default=False,
+                        help='set to true to restart a previous starning')
+
+    parser.add_argument('--resume_model', type=str, default="checkpoint/weights.%(language)s.hdf5",
+                        help='path of the model to load when the starting is resumed')
 
     args = parser.parse_args()
 
@@ -121,4 +126,4 @@ if __name__ == "__main__":
                             dataset.get_training_std(),
                             set_type="val")
 
-    train(train_set, val_set, cfg, args.config)
+    train(train_set, val_set, cfg, args.config, args.resume, args.resume_model)
