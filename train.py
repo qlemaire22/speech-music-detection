@@ -10,7 +10,7 @@ import keras.models
 import os
 
 
-def training_data_processing(spec_file, annotation_file, mean, std):
+def training_data_processing(spec_file, annotation_file, mean, std, spec_file2=None, annotation_file2=None):
     spec = np.load(spec_file)
 
     # noise

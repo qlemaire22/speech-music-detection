@@ -36,6 +36,9 @@ class DatasetLoader():
             filelist_path = os.path.join(dataset_folder, self.cfg[dataset]["filelists_folder"] + suffix)
             data_path = os.path.join(dataset_folder, self.cfg[dataset]["data_folder"] + suffix)
 
+            if not(os.path.exists(filelist_path)) or not(os.path.exists(data_path)):
+                raise ValueError("The datatset " + dataset + " is unfound or has not been preprocessed for the chosen hyper-parameters.")
+
             files = glob.glob(filelist_path + "/*")
 
             for file in files:

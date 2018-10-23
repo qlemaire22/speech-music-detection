@@ -2,15 +2,16 @@ import keras
 import numpy as np
 from math import ceil
 import smd.config as config
-
-"""
-    - Only support mixed audio for now
-    - verif batch construction ok
-    verif dataset exist dataset model_loader
-"""
+import warnings
+import random
 
 
 class DataGenerator(keras.utils.Sequence):
+    """ Data genertor class for speech and music detection.
+
+    Use this class for validation and training purposes.
+    """
+
     def __init__(self, dataset, batch_size, target_seq_length, data_processing, mean, std, set_type='train'):
         self.dataset = dataset
         self.set_type = set_type
@@ -21,11 +22,16 @@ class DataGenerator(keras.utils.Sequence):
         self.std = std
 
         if set_type == 'train':
-            self.length = dataset["n_frame_mixed"] + int((dataset["n_frame_music"] + dataset["n_frame_speech"]) / 2)
+            self.length = dataset["n_frame_mixed"] + dataset["n_frame_noise"] + int(
+                (dataset["n_frame_music"] + dataset["n_frame_speech"]) * (config.BLOCK_MIXING_MIN + config.BLOCK_MIXING_MAX) / 2)
         elif set_type == 'val':
             self.length = dataset["n_frame"]
+        else:
+            raise ValueError(
+                "Only set type val and train can be use in Data Generator.")
 
-        self.nb_batch = ceil(self.length / (self.batch_size * self.target_seq_length))
+        self.nb_batch = ceil(
+            self.length / (self.batch_size * self.target_seq_length))
         self.batch_composition = []
 
         self.on_epoch_end()
@@ -34,7 +40,14 @@ class DataGenerator(keras.utils.Sequence):
         """ Return one batch and its corresponding label """
         X, Y = None, None
         for item in self.batch_composition[index]:
-            mels, label = self.data_processing(item[0] + ".npy", item[0] + ".txt", self.mean, self.std)
+            if len(item) == 2:
+                mels, label = self.data_processing(
+                    item[0] + ".npy", item[0] + ".txt", self.mean, self.std)
+            else:
+                mels, label = self.data_processing(
+                    item[1][0] + ".npy", item[1][0] + ".txt", self.mean, self.std,
+                    spec_file2=item[2][0] + ".npy",
+                    annotation_file2=item[2][0] + ".txt")
             if X is None:
                 X = mels.T
                 Y = label.T
@@ -57,7 +70,38 @@ class DataGenerator(keras.utils.Sequence):
             For non mixed possibility:
             create couples?
         """
-        self.indexes = np.arange(len(self.dataset["mixed"]))
+        if self.set_type == "train":
+            self.indexes = ["1_" + str(i)
+                            for i in range(len(self.dataset["mixed"]))]
+            self.indexes += ["5_" + str(i)
+                             for i in range(len(self.dataset["noise"]))]
+
+            music = list(range(len(self.dataset["music"])))
+            speech = list(range(len(self.dataset["speech"])))
+            random.shuffle(music)
+            random.shuffle(speech)
+            index = 0
+            music_speech = []
+            while index < len(music) and index < len(speech):
+                music_speech.append("2_" + speech[index] + '_' + music[index])
+                index += 1
+
+            self.indexes += music_speech
+
+            if index < len(speech):
+                self.indexes += ["3_" + str(i)
+                                 for i in range(index, len(speech))]
+            elif index < len(music):
+                self.indexes += ["4_" + str(i)
+                                 for i in range(index, len(music))]
+        elif self.set_type == "val":
+            self.indexes = ["1_" + str(i)
+                            for i in range(len(self.dataset["mixed"]))]
+            self.indexes += ["3_" + str(i)
+                             for i in range(len(self.dataset["speech"]))]
+            self.indexes += ["4_" + str(i)
+                             for i in range(len(self.dataset["music"]))]
+
         np.random.shuffle(self.indexes)
 
         target_length = self.target_seq_length * self.batch_size
@@ -71,10 +115,49 @@ class DataGenerator(keras.utils.Sequence):
             is_full = False
             self.batch_composition.append([])
             while not(is_full) and id < len(self.indexes):
-                item = self.dataset["mixed"][self.indexes[id]]
-                if sum + int(float(item[1]) * 0.70) <= target_length:
+                info = self.indexes[id].split('_')
+                if info[0] == "1":
+                    item = self.dataset["mixed"][int(info[1])]
+                    length = item[1]
+                elif info[0] == "2":
+                    item1 = self.dataset["speech"][int(info[1])]
+                    item2 = self.dataset["music"][int(info[2])]
+                    length = (float(item1[1]) + float(item2[1])) * \
+                        (config.BLOCK_MIXING_MIN + config.BLOCK_MIXING_MAX) / 2
+                    item = [None, item1, item2]
+                elif info[0] == "3":
+                    item = self.dataset["speech"][int(info[1])]
+                    length = item[1]
+                elif info[0] == "4":
+                    item = self.dataset["music"][int(info[1])]
+                    length = item[1]
+                elif info[0] == "5":
+                    item = self.dataset["noise"][int(info[1])]
+                    length = item[1]
+
+                if sum + int(float(length) * 0.70) <= target_length:
                     id += 1
                     self.batch_composition[i].append(item)
-                    sum += int(item[1])
+                    sum += int(float(length))
                 else:
                     is_full = True
+
+        empty = 0
+        for i in range(len(self.batch_composition)):
+            if self.batch_composition[i] == []:
+                empty += 1
+
+        if empty > 0:
+            warnings.warn("The number of batch has been reduced by " +
+                          str(empty) + " due to empty batches.")
+            warnings.warn("The seq length will be increased.")
+            warnings.warn(
+                "Please consider reducing the max_length of the audio files or increasing the target_length.")
+            self.nb_batch -= empty
+            self.on_epoch_end()
+
+        if id < len(self.indexes) - 1:
+            warnings.warn(
+                "Some audio files could not enter in the batch composition. Excluded files: " + str(len(self.indexes) - 1 - id))
+            warnings.warn(
+                "Please consider reducing the max_length of the audio files.")
