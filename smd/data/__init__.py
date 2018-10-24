@@ -1,7 +1,8 @@
 """ Module for all functions related to data """
+from __future__ import absolute_import
 
-from smd.data import preprocessing
-from smd.data import data_augmentation
-from smd.data import data_generator
-from smd.data import dataset_loader
-from smd.data import display
+from . import preprocessing
+from . import data_augmentation
+from . import data_generator
+from . import dataset_loader
+from . import display

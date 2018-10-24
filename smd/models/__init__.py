@@ -1,4 +1,7 @@
-from smd.models.model_loader import load_model
-import smd.models.b_lstm
-import smd.models.b_conv_lstm
-import smd.models.tcn
+from __future__ import absolute_import
+
+from . import b_lstm
+from . import b_conv_lstm
+from . import tcn
+
+from .model_loader import load_model

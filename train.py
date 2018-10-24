@@ -13,9 +13,6 @@ import os
 
 def training_data_processing(spec_file, annotation_file, mean, std, spec_file2=None, annotation_file2=None):
     spec = np.load(spec_file)
-
-    # noise
-
     spec, stretching_rate = pitch_time_deformation_spec(spec)
     spec = random_filter_spec(spec)
     spec = random_loudness_spec(spec)
@@ -24,9 +21,6 @@ def training_data_processing(spec_file, annotation_file, mean, std, spec_file2=N
 
     if not(spec_file2 is None):
         spec2 = np.load(spec_file2)
-
-        # noise
-
         spec2, stretching_rate2 = pitch_time_deformation_spec(spec2)
         spec2 = random_filter_spec(spec2)
         spec2 = random_loudness_spec(spec2)
