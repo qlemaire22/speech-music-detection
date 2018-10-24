@@ -56,7 +56,7 @@ def resample_dataset(dataset_folder, dataset):
 
     # specs = []
 
-    for file in tqdm(audio_files[:10]):
+    for file in tqdm(audio_files):
         basename = os.path.basename(file)
         new_file = os.path.join(NEW_DATA_PATH, basename).replace(
             os.path.splitext(file)[1], '.wav')
