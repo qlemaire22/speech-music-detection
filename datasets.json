@@ -12,19 +12,23 @@
     "filelists_folder": ""
   },
   "musan": {
-    "data_folder": "ofai/audio",
-    "filelists_folder": "ofai/filelists"
+    "data_folder": "musan/audio",
+    "filelists_folder": "musan/filelists"
   },
   "muspeak": {
-    "data_folder": "",
-    "filelists_folder": ""
+    "data_folder": "muspeak/audio",
+    "filelists_folder": "muspeak/filelists"
   },
   "scheirer_slaney": {
-    "data_folder": "",
-    "filelists_folder": ""
+    "data_folder": "scheirer_slaney/audio",
+    "filelists_folder": "scheirer_slaney/filelists"
   },
   "klaus_seyerlehner": {
     "data_folder": "",
     "filelists_folder": ""
+  },
+  "esc-50": {
+    "data_folder": "esc-50/audio",
+    "filelists_folder": "esc-50/filelists"
   }
 }
