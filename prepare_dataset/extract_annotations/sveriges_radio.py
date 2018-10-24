@@ -2,7 +2,7 @@ import sys
 sys.path.append("../..")
 import glob
 import os.path
-from smd.data.preprocessing import labels
+import smd.utils as utils
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
 import dateparser
@@ -103,5 +103,5 @@ if __name__ == "__main__":
 
         exit()
 
-        labels.save_annotation(events, os.path.basename(
+        utils.save_annotation(events, os.path.basename(
             audio).replace(".WAV", "") + ".txt", AUDIO_PATH)

@@ -101,6 +101,8 @@ class DataGenerator(keras.utils.Sequence):
                              for i in range(len(self.dataset["speech"]))]
             self.indexes += ["4_" + str(i)
                              for i in range(len(self.dataset["music"]))]
+            self.indexes += ["5_" + str(i)
+                             for i in range(len(self.dataset["noise"]))]
 
         np.random.shuffle(self.indexes)
 

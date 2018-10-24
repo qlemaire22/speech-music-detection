@@ -22,6 +22,7 @@ class DatasetLoader():
         self.val_set = {"mixed": [],
                         "speech": [],
                         "music": [],
+                        "noise": [],
                         "n_frame": 0}
 
         self.test_set = {"mixed": [],
@@ -50,6 +51,8 @@ class DatasetLoader():
                     self.load_list(file, "speech", self.train_set, data_path)
                 elif "noise_train" in file:
                     self.load_list(file, "noise", self.train_set, data_path)
+                elif "noise_val" in file:
+                    self.load_list(file, "noise", self.val_set, data_path)
                 elif "mixed_val" in file:
                     self.load_list(file, "mixed", self.val_set, data_path)
                 elif "speech_val" in file:

@@ -2,7 +2,7 @@ import sys
 sys.path.append("../..")
 import glob
 import os.path
-from smd.data.preprocessing import labels
+import smd.utils as utils
 from tqdm import tqdm
 import scipy.io
 
@@ -52,4 +52,4 @@ if __name__ == "__main__":
 
         music_events = get_event_list(music, "music")
 
-        labels.save_annotation(music_events, os.path.basename(audio).replace(".mp3", "") + ".txt", AUDIO_PATH)
+        utils.save_annotation(music_events, os.path.basename(audio).replace(".mp3", "") + ".txt", AUDIO_PATH)

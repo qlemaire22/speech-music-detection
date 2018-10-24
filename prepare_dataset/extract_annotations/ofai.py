@@ -2,7 +2,7 @@ import sys
 sys.path.append("../..")
 import glob
 import os.path
-from smd.data.preprocessing import labels
+import smd.utils as utils
 from tqdm import tqdm
 
 DATASET_PATH = "/Users/quentin/Computer/DataSet/Music/speech_music_detection/ofai/"
@@ -59,4 +59,4 @@ if __name__ == "__main__":
 
         events = concatenate_events(music_events, speech_events)
 
-        labels.save_annotation(events, os.path.basename(audio).replace(".mp3", "") + ".txt", AUDIO_PATH)
+        utils.save_annotation(events, os.path.basename(audio).replace(".mp3", "") + ".txt", AUDIO_PATH)

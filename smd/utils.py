@@ -64,6 +64,10 @@ def save_annotation(events, filename, dst=None):
     [t_start, t_end, label],
     ...
     ]
+
+    or
+
+    [[music]], [[speech]] or [[noise]]
     """
     if dst is None:
         path = filename
@@ -71,8 +75,15 @@ def save_annotation(events, filename, dst=None):
         path = os.path.join(dst, filename)
 
     with open(path, "w") as f:
-        for event in events:
-            f.write(str(event[0]) + '\t' + str(event[1]) + '\t' + event[2] + '\n')
+        if events == [["speech"]]:
+            f.write("speech")
+        elif events == [["music"]]:
+            f.write("music")
+        elif events == [["noise"]]:
+            f.write("noise")
+        else:
+            for event in events:
+                f.write(str(event[0]) + '\t' + str(event[1]) + '\t' + event[2] + '\n')
 
 
 def load_json(filename):
