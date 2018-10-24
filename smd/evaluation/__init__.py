@@ -2,4 +2,6 @@
 
 from __future__ import absolute_import
 
-__all__ = []
+from .eval import eval
+
+__all__ = ['eval']
