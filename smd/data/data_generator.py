@@ -57,9 +57,9 @@ class DataGenerator(keras.utils.Sequence):
         if not(self.set_type == "test"):
             n_frame, dim = X.shape
             seq_length = ceil(n_frame / self.nb_batch)
-            X.resize((self.nb_batch, seq_length, dim))
-            Y.resize((self.nb_batch, seq_length, config.CLASSES))
-        return X, Y
+            return np.resize(X, (self.nb_batch, seq_length, dim)), np.resize(Y, (self.nb_batch, seq_length, config.CLASSES))
+        else:
+            return X, Y
 
     def __len__(self):
         """ Return the number of batches """
