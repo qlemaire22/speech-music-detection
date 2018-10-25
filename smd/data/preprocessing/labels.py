@@ -32,38 +32,31 @@ def get_label(filename, n_frame, stretching_rate=1):
 
 def label_to_annotation(label):
     """Return the formatted annotations based on the label matrix."""
-    if label == [["music"]]:
-        return label
-    elif label == [["speech"]]:
-        return label
-    elif label == [["noise"]]:
-        return label
-    else:
-        t1_music = -1
-        t1_speech = -1
-        t2_music = -1
-        t2_speech = -1
+    t1_music = -1
+    t1_speech = -1
+    t2_music = -1
+    t2_speech = -1
 
-        events = []
+    events = []
 
-        for i in range(len(label[0])):
-            if label[0][i] == 1 and t1_speech == -1:
-                t1_speech = frame_to_time(i)
-            elif label[0][i] == 0 and t1_speech != -1:
-                t2_speech = frame_to_time(i)
-                events.append([str(t1_speech), str(t2_speech), "speech"])
-                t1_speech = -1
-                t2_speech = -1
+    for i in range(len(label[0])):
+        if label[0][i] == 1 and t1_speech == -1:
+            t1_speech = frame_to_time(i)
+        elif label[0][i] == 0 and t1_speech != -1:
+            t2_speech = frame_to_time(i)
+            events.append([str(t1_speech), str(t2_speech), "speech"])
+            t1_speech = -1
+            t2_speech = -1
 
-            if label[1][i] == 1 and t1_music == -1:
-                t1_music = frame_to_time(i)
-            elif label[1][i] == 0 and t1_music != -1:
-                t2_music = frame_to_time(i)
-                events.append([str(t1_music), str(t2_music), "music"])
-                t1_music = -1
-                t2_music = -1
+        if label[1][i] == 1 and t1_music == -1:
+            t1_music = frame_to_time(i)
+        elif label[1][i] == 0 and t1_music != -1:
+            t2_music = frame_to_time(i)
+            events.append([str(t1_music), str(t2_music), "music"])
+            t1_music = -1
+            t2_music = -1
 
-        return events
+    return events
 
 
 def time_to_frame(time):

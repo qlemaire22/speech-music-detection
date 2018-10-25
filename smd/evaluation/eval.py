@@ -1,5 +1,6 @@
 import sed_eval
 import dcase_util
+from tqdm import tqdm
 
 
 def eval(ground_truth_events, predicted_events, segment_length=0.01, event_tolerance=0.2):
@@ -16,9 +17,9 @@ def eval(ground_truth_events, predicted_events, segment_length=0.01, event_toler
         If one of those two parameters is set to None, this evaluation will be skipped.
     """
     data = []
+    all_data = dcase_util.containers.MetaDataContainer()
 
     if type(ground_truth_events) == str and type(predicted_events) == str:
-        all_data = dcase_util.containers.MetaDataContainer()
         reference_event_list = sed_eval.io.load_event_list(ground_truth_events)
         estimated_event_list = sed_eval.io.load_event_list(predicted_events)
 
@@ -53,10 +54,13 @@ def eval(ground_truth_events, predicted_events, segment_length=0.01, event_toler
                     for event in p:
                         formatted_p_events.append({'onset': event[0], 'offset': event[1], 'event_label': event[2]})
 
+                    formatted_p_events = dcase_util.containers.MetaDataContainer(formatted_p_events)
+                    formatted_gt_events = dcase_util.containers.MetaDataContainer(formatted_gt_events)
+
                     data.append({'reference_event_list': formatted_gt_events,
                                  'estimated_event_list': formatted_p_events})
 
-                    all_data += reference_event_list
+                    all_data += formatted_gt_events
             else:
                 formatted_gt_events = []
                 formatted_p_events = []
@@ -66,6 +70,9 @@ def eval(ground_truth_events, predicted_events, segment_length=0.01, event_toler
 
                 for event in predicted_events:
                     formatted_p_events.append({'onset': event[0], 'offset': event[1], 'event_label': event[2]})
+
+                formatted_p_events = dcase_util.containers.MetaDataContainer(formatted_p_events)
+                formatted_gt_events = dcase_util.containers.MetaDataContainer(formatted_gt_events)
 
                 data.append({'reference_event_list': formatted_gt_events,
                              'estimated_event_list': formatted_p_events})
@@ -88,7 +95,7 @@ def eval(ground_truth_events, predicted_events, segment_length=0.01, event_toler
             t_collar=event_tolerance
         )
 
-    for file_pair in data:
+    for file_pair in tqdm(data):
         if not(segment_length is None):
             segment_based_metrics.evaluate(
                 reference_event_list=file_pair['reference_event_list'],

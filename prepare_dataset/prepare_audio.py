@@ -54,8 +54,6 @@ def resample_dataset(dataset_folder, dataset):
     mean = np.zeros(audio_config.N_MELS)
     var = np.zeros(audio_config.N_MELS)
 
-    # specs = []
-
     for file in tqdm(audio_files):
         basename = os.path.basename(file)
         new_file = os.path.join(NEW_DATA_PATH, basename).replace(
@@ -96,16 +94,8 @@ def resample_dataset(dataset_folder, dataset):
 
                     with open(os.path.join(NEW_FILELISTS_FOLDER, key), 'a') as f:
                         f.write(os.path.basename(new_file).replace(".wav", '') + '\t' + str(length) + '\n')
-        # audio = preprocessing.load_audio(file)
-        # specs.append(preprocessing.get_log_melspectrogram(audio))
 
     var /= (n - 1)
-
-    # spec = np.concatenate((specs[0], specs[1]), axis=1)
-    # spec = preprocessing.normalize(spec, mean, np.sqrt(var))
-
-    # print(np.mean(np.mean(spec, axis=1)))
-    # print(np.mean(np.var(spec, axis=1)))
 
     infos = {
         "N_FRAME_TOT": n_tot,

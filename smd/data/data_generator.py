@@ -7,10 +7,7 @@ import random
 
 
 class DataGenerator(keras.utils.Sequence):
-    """ Data genertor class for speech and music detection.
-
-    Use this class for validation and training purposes.
-    """
+    """ Data genertor class for speech and music detection."""
 
     def __init__(self, dataset, batch_size, target_seq_length, data_processing, mean, std, set_type='train'):
         self.dataset = dataset
@@ -24,14 +21,16 @@ class DataGenerator(keras.utils.Sequence):
         if set_type == 'train':
             self.length = dataset["n_frame_mixed"] + dataset["n_frame_noise"] + int(
                 (dataset["n_frame_music"] + dataset["n_frame_speech"]) * (config.BLOCK_MIXING_MIN + config.BLOCK_MIXING_MAX) / 2)
+            self.nb_batch = ceil(
+                self.length / (self.batch_size * self.target_seq_length))
         elif set_type == 'val':
             self.length = dataset["n_frame"]
-        else:
-            raise ValueError(
-                "Only set type val and train can be use in Data Generator.")
+            self.nb_batch = ceil(
+                self.length / (self.batch_size * self.target_seq_length))
+        elif set_type == 'test':
+            self.length = dataset["n_frame"]
+            self.nb_batch = len(dataset["mixed"])
 
-        self.nb_batch = ceil(
-            self.length / (self.batch_size * self.target_seq_length))
         self.batch_composition = []
 
         self.on_epoch_end()
@@ -55,10 +54,11 @@ class DataGenerator(keras.utils.Sequence):
                 X = np.concatenate((X, mels.T), axis=0)
                 Y = np.concatenate((Y, label.T), axis=0)
 
-        n_frame, dim = X.shape
-        seq_length = ceil(n_frame / self.nb_batch)
-        X.resize((self.nb_batch, seq_length, dim))
-        Y.resize((self.nb_batch, seq_length, config.CLASSES))
+        if not(self.set_type == "test"):
+            n_frame, dim = X.shape
+            seq_length = ceil(n_frame / self.nb_batch)
+            X.resize((self.nb_batch, seq_length, dim))
+            Y.resize((self.nb_batch, seq_length, config.CLASSES))
         return X, Y
 
     def __len__(self):
@@ -66,11 +66,13 @@ class DataGenerator(keras.utils.Sequence):
         return self.nb_batch
 
     def on_epoch_end(self):
-        """
-            For non mixed possibility:
-            create couples?
-        """
-        if self.set_type == "train":
+        self.batch_composition = []
+
+        if self.set_type == "test":
+            for item in self.dataset["mixed"]:
+                self.batch_composition.append([item])
+            return
+        elif self.set_type == "train":
             self.indexes = ["1_" + str(i)
                             for i in range(len(self.dataset["mixed"]))]
             self.indexes += ["5_" + str(i)
@@ -107,8 +109,6 @@ class DataGenerator(keras.utils.Sequence):
         np.random.shuffle(self.indexes)
 
         target_length = self.target_seq_length * self.batch_size
-
-        self.batch_composition = []
 
         id = 0
 

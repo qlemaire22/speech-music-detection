@@ -59,7 +59,8 @@ def train(train_set, val_set, cfg, config_name, resume, model_path):
 
     csv_logger = CSVLogger('checkpoint/' + config_name +
                            '-training.log', append=resume)
-    save_ckpt = ModelCheckpoint("checkpoint/weights." + config_name + ".hdf5", monitor='val_loss',
+
+    save_ckpt = ModelCheckpoint("checkpoint/weights.{epoch:02d}-{val_loss:.2f}" + config_name + ".hdf5", monitor='val_loss',
                                 verbose=1,
                                 save_best_only=True,
                                 period=1)
@@ -99,7 +100,7 @@ if __name__ == "__main__":
     parser.add_argument('--resume', type=bool, default=False,
                         help='set to true to restart a previous starning')
 
-    parser.add_argument('--resume_model', type=str, default="checkpoint/weights.%(language)s.hdf5",
+    parser.add_argument('--resume_model', type=str, default="checkpoint/weights.%s.hdf5",
                         help='path of the model to load when the starting is resumed')
 
     args = parser.parse_args()
