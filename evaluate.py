@@ -8,8 +8,6 @@ import keras.models
 from tqdm import tqdm
 import smd.evaluation
 import os
-# from multiprocessing import Pool
-# from functools import partial
 
 
 def test_data_processing(spec_file, annotation_file, mean, std):
@@ -50,9 +48,7 @@ def evaluate(test_set, cfg, config_name, model_path, save_path):
         ground_truth_events.append(preprocessing.label_to_annotation(np.around(gt)))
 
     print("Evaluation..")
-    # pool = Pool(processes=4)
-    # func = partial(smd.evaluation.eval, ground_truth_events, predictions_events, segment_length=0.01, event_tolerance=0.5)
-    # result = pool.map_async(func)
+
     result = smd.evaluation.eval(ground_truth_events, predictions_events, segment_length=0.01, event_tolerance=0.5)
 
     with open(os.path.join(save_path, "eval_" + config_name + ".txt"), 'w') as f:

@@ -93,7 +93,7 @@ def eval(ground_truth_events, predicted_events, segment_length=0.01, event_toler
         event_based_metrics = sed_eval.sound_event.EventBasedMetrics(
             event_label_list=event_labels,
             t_collar=event_tolerance,
-            percentage_of_length=0,
+            percentage_of_length=0.,
             evaluate_onset=True,
             evaluate_offset=False
         )
