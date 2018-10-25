@@ -7,6 +7,7 @@ import numpy as np
 import keras.models
 from tqdm import tqdm
 import smd.evaluation
+import os
 
 
 def test_data_processing(spec_file, annotation_file, mean, std):
@@ -20,10 +21,12 @@ def test_data_processing(spec_file, annotation_file, mean, std):
     return mels, label
 
 
-def predict(test_set, cfg, config_name, model_path):
-    print("Loading the model to resume..")
-    model = keras.models.load_model(model_path % config_name)
-
+def evaluation(test_set, cfg, config_name, model_path, save_path):
+    print("Loading the model to resume " + model_path + "..")
+    if '%s' in model_path:
+        model = keras.models.load_model(model_path % config_name)
+    else:
+        model = keras.models.load_model(model_path)
     print("Start the prediction..")
 
     predictions = []
@@ -45,7 +48,11 @@ def predict(test_set, cfg, config_name, model_path):
         ground_truth_events.append(preprocessing.label_to_annotation(np.around(gt)))
 
     print("Evaluation..")
-    smd.evaluation.eval(ground_truth_events, predictions_events, segment_length=0.01, event_tolerance=0.2)
+    result = smd.evaluation.eval(ground_truth_events, predictions_events, segment_length=0.01, event_tolerance=0.2)
+
+    with open(os.path.join(save_path, "eval_" + config_name + ".txt"), 'w') as f:
+        for item in result:
+            f.write(item.__str__())
 
 
 if __name__ == "__main__":
@@ -54,6 +61,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--config', type=str, default="test1",
                         help='the configuration of the training')
+
+    parser.add_argument('--save_path', type=str, default=".",
+                        help='the location where to save the evaluation')
 
     parser.add_argument('--data_location', type=str, default="/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
                         help='the location of the data')
@@ -82,4 +92,4 @@ if __name__ == "__main__":
                              dataset.get_training_std(),
                              set_type="test")
 
-    predict(test_set, cfg, args.config, args.resume_model)
+    evaluation(test_set, cfg, args.config, args.resume_model, args.save_path)

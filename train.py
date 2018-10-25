@@ -47,8 +47,11 @@ def validation_data_processing(spec_file, annotation_file, mean, std):
 
 def train(train_set, val_set, cfg, config_name, resume, model_path):
     if resume:
-        print("Loading the model to resume..")
-        model = keras.models.load_model(model_path % config_name)
+        print("Loading the model to resume " + model_path + "..")
+        if '%s' in model_path:
+            model = keras.models.load_model(model_path % config_name)
+        else:
+            model = keras.models.load_model(model_path)
     else:
         print("Loading the network..")
         model = load_model(cfg["model"])

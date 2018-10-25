@@ -56,6 +56,18 @@ def label_to_annotation(label):
             t1_music = -1
             t2_music = -1
 
+    if t1_speech != -1:
+        t2_speech = frame_to_time(len(label[0]))
+        events.append([str(t1_speech), str(t2_speech), "speech"])
+        t1_speech = -1
+        t2_speech = -1
+
+    if t1_music != -1:
+        t2_music = frame_to_time(len(label[0]))
+        events.append([str(t1_music), str(t2_music), "music"])
+        t1_music = -1
+        t2_music = -1
+
     return events
 
 
