@@ -27,7 +27,6 @@ def training_data_processing(spec_file, annotation_file, mean, std, spec_file2=N
         label2 = preprocessing.get_label(
             annotation_file2, spec2.shape[1], stretching_rate=stretching_rate2)
         spec, label = block_mixing_spec(spec, spec2, label, label2)
-        exit()
 
     mels = preprocessing.get_scaled_mel_bands(spec)
     mels = preprocessing.normalize(mels, mean, std)
