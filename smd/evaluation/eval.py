@@ -94,8 +94,8 @@ def eval(ground_truth_events, predicted_events, segment_length=0.01, event_toler
             event_label_list=event_labels,
             t_collar=event_tolerance,
             percentage_of_length=0,
-            eval_onset=True,
-            eval_offset=False
+            evaluate_onset=True,
+            evaluate_offset=False
         )
 
     for file_pair in tqdm(data):
