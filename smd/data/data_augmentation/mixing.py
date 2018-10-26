@@ -22,7 +22,7 @@ def block_mixing_audio(audio1, audio2):
 
 def block_mixing_spec(spec1, spec2, label1, label2):
     feat, n1 = spec1.shape
-    n2 = spec2.shape[2]
+    n2 = spec2.shape[1]
 
     b1 = int(config.BLOCK_MIXING_MIN * min(n1, n2))
     b2 = int(config.BLOCK_MIXING_MAX * min(n1, n2))

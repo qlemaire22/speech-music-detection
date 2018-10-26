@@ -92,8 +92,9 @@ def resample_dataset(dataset_folder, dataset):
                         n_tot += length
                         n_test += length
 
-                    with open(os.path.join(NEW_FILELISTS_FOLDER, key), 'a') as f:
-                        f.write(os.path.basename(new_file).replace(".wav", '') + '\t' + str(length) + '\n')
+                    if length > 10:
+                        with open(os.path.join(NEW_FILELISTS_FOLDER, key), 'a') as f:
+                            f.write(os.path.basename(new_file).replace(".wav", '') + '\t' + str(length) + '\n')
 
     var /= (n - 1)
 

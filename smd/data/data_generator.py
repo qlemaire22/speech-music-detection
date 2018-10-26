@@ -85,7 +85,7 @@ class DataGenerator(keras.utils.Sequence):
             index = 0
             music_speech = []
             while index < len(music) and index < len(speech):
-                music_speech.append("2_" + speech[index] + '_' + music[index])
+                music_speech.append("2_" + str(speech[index]) + '_' + str(music[index]))
                 index += 1
 
             self.indexes += music_speech
@@ -137,7 +137,7 @@ class DataGenerator(keras.utils.Sequence):
                     item = self.dataset["noise"][int(info[1])]
                     length = item[1]
 
-                if sum + int(float(length) * 0.70) <= target_length:
+                if sum + int(float(length) * 0.60) <= target_length:
                     id += 1
                     self.batch_composition[i].append(item)
                     sum += int(float(length))
