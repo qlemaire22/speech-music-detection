@@ -114,3 +114,4 @@ venv.bak/
 checkpoint/
 eval_*
 audio_test/
+trained/

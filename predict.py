@@ -45,7 +45,7 @@ if __name__ == "__main__":
     parser.add_argument('--config', type=str, default="test1",
                         help='the configuration of the training')
 
-    parser.add_argument('--data_path', type=str, default="audio/",
+    parser.add_argument('--data_path', type=str, default="audio_test/",
                         help='path to a file or a folder for prediction')
 
     parser.add_argument('--data_location', type=str, default="/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
