@@ -3,10 +3,10 @@
 SAMPLING_RATE = 22050
 FFT_WINDOW_SIZE = 1024
 HOP_LENGTH = 512
-N_MELS = 100
+N_MELS = 80
 F_MIN = 27.5
 F_MAX = 8000
-AUDIO_MAX_LENGTH = 100  # in seconds
+AUDIO_MAX_LENGTH = 90  # in seconds
 
 # Data augmentation config
 
