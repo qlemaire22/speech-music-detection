@@ -12,7 +12,7 @@ librosa['n_fft'] = config.FFT_WINDOW_SIZE
 
 def get_spectrogram(audio):
     """Return the power magnitude spectrogram of the audio."""
-    return np.abs(librosa.stft(audio))**2
+    return np.abs(librosa.stft(audio))
 
 
 def get_scaled_mel_bands(spec):

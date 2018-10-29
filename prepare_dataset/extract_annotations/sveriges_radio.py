@@ -29,7 +29,8 @@ def find_associated_label(audio_file, label_files):
 
 
 def print_timedelta(time):
-    s, ms = time.seconds, time.microseconds
+    s = time.seconds
+    # ms = time.microsecond
     h = int(s / 3600.0)
     s = s - h * 3600
     m = int(s / 60.0)
@@ -48,10 +49,19 @@ def get_event_list(label_file):
     files = []
     events = []
     starting_time = None
+    trackn = 0
+    groupn = 0
     for child in root:
         if child.tag == "Track":
+            trackn += 1
+            print("new track")
             for group in child:
+                print(group)
+                # if group.tag == "Type":
+                #     print(group.text)
+
                 if group.tag == "Group":
+                    groupn += 1
                     for element in group:
                         if element.tag == "Element":
                             event = []
@@ -68,6 +78,8 @@ def get_event_list(label_file):
                                     time = datetime.datetime.combine(datetime.date.today(
                                     ), time) - datetime.datetime.combine(datetime.date.today(), starting_time)
                                     event.append(print_timedelta(time))
+                                    if print_timedelta(time) == '0:00:0':
+                                        print("BEGINNING")
                                 elif sub_element.tag == "Time_Stop":
                                     time = dateparser.parse(
                                         sub_element.text).time()
@@ -84,6 +96,9 @@ def get_event_list(label_file):
     print(len(events))
     print(len(np.unique(files)))
     print(len(np.unique(events)))
+
+    print(trackn)
+    print(groupn)
     return events
 
 
