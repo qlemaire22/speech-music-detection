@@ -137,7 +137,7 @@ class DataGenerator(keras.utils.Sequence):
                     item = self.dataset["noise"][int(info[1])]
                     length = item[1]
 
-                if sum + int(float(length) * 0.60) <= target_length:
+                if sum + int(float(length) * 0.51) <= target_length:
                     id += 1
                     self.batch_composition[i].append(item)
                     sum += int(float(length))
@@ -155,8 +155,6 @@ class DataGenerator(keras.utils.Sequence):
             warnings.warn("The seq length will be increased.")
             warnings.warn(
                 "Please consider reducing the max_length of the audio files or increasing the target_length.")
-            self.nb_batch -= empty
-            self.on_epoch_end()
 
         if id < len(self.indexes) - 1:
             warnings.warn(

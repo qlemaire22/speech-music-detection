@@ -3,7 +3,7 @@ from keras.layers import Dense, ConvLSTM2D, Bidirectional, TimeDistributed, Resh
 from smd import config
 
 
-def create_b_conv_lstm(filters_list, kernel_size_list, stride_list, dilation_rate_list, dropout=0.05):
+def create_b_conv_lstm(filters_list=[5, 5], kernel_size_list=[3, 3], stride_list=[1, 1], dilation_rate_list=[1, 1], dropout=0.05):
     input_layer = Input(shape=(None, config.N_MELS))
     x = Reshape((-1, 1, 1, config.N_MELS))(input_layer)
 

@@ -3,7 +3,7 @@ from keras.layers import Dense, LSTM, Bidirectional, TimeDistributed
 from smd import config
 
 
-def create_b_lstm(hidden_units, dropout=0.05):
+def create_b_lstm(hidden_units=50, dropout=0.05):
     model = Sequential()
 
     i = 0

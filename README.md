@@ -1,51 +1,93 @@
 # Speech & Music Detection
 
-# ! Still in development, not yet working !
+Python framework for speech and music detection using Keras.
 
-## Task
+## Description
 
-TODO: Task description
+This framework is designed to easily evaluation new models and configurations for the speech and music detection task using deep learning. Different architectures are already implemented like Temporal Convolutional Network (TCN), Bidirectional ConvLSTM (B-ConvLSTM) and Bidirectional LSTM (B-LTSM).
+
+Moreover, new sequential architectures  and custom datasets can easily be added to the framework.
 
 ## Installation
 
-The SoX command line utility is required ([HomePage](http://sox.sourceforge.net)).
+The SoX command line utility is required for the dataset preprocessing. ([HomePage](http://sox.sourceforge.net)).
 
 Installation with HomeBrew:
 
     brew install lame
     brew reinstall sox --with-lame  # for mp3 compatibility
 
-Installation of the Python packages with PyPi:
+The implementation is based on several Python libraries, especially:
+
+- `Keras` for the deep learning implementations [(link)](https://github.com/keras-team/keras).
+- `Librosa` for the pre-processing of the audio [(link)](https://github.com/librosa/librosa).
+- `sed_eval` for the evaluation of the models [(link)](https://github.com/TUT-ARG/sed_eval).
+- `keras-tcn` for the implementation of the TCN [(link)](https://github.com/philipperemy/keras-tcn).
+- `hyperas` for hyper-parameters optimization on Keras with Hyperopt [(link)](https://github.com/maxpumperla/hyperas).
+
+Installation of the Python libraries with PyPi:
 
     pip install -r requirements.txt
 
-TODO: Packages used
+To listen to the audio while visualizing the annotations with `smd.display.audio_with_events`, you need the toolbox `sed_vis` that you can download on [GitHub](https://github.com/TUT-ARG/sed_vis).
 
-To listen to the audio while vizualizing the annotations with `smd.display.audio_with_events`, you need the toolbox `sed_vis` that you can download on [GitHub](https://github.com/TUT-ARG/sed_vis).
+## Configuration
+
+The different parameters of the framework that are not supposed to be changed when comparing different architectures can be set in `smd/config.py`.
+
+Those parameters are:
+
+- The preprocessing parameters as the sampling rate.
+- The data augmentation parameters.
+- The loss and metric used for the training.
 
 ## Data
 
-The different parameters of the data pre-processing or of the data augmentation can be changed in `smd/config.py`.
+### Add a dataset
 
 ### Pre-processing
 
+Prior to the learning phase, each audio file is resampled to a 22.05kHz mono audio of maximum 1mn30 (the files are split). Then a Short-Time Fourier Transform (STFT) with a Hann window, a frame length of 1024 and Hop size of 512 is applied and only the magnitude of the energy spectrogram is kept. Those matrices are then stored for the learning phase.
+
+During the learning phase, the spectrograms are loaded, then deformed by the data augmentation and a mel filterbank with 100 coefficients between 27.5 and 8000 Hz is applied. Those coefficients are then put on a log scale, normalized over the training set and inputted into the network.
+
 ### Data Augmentation
 
-Different transformations are applied to each training sample to do some data augmentation. The implemented transformations are:
+Different transformations are applied to each training sample to do some data augmentation. For speed purposes, the data augmentation is not applied to the audio signal but on the magnitude of the energy spectrogram. The implemented transformations are:
 
 - Time stretching
 - Pitch shifting
-- Dynamic range compression
-- Gain changement
+- Random loudness
 - Block mixing
-- Background noise
+- Gaussian frequency filter
 
+Those deformations are based on the work of J. Schlüter and T. Grill [1].
 
 ## Experiment configuration
 
-You can configure the model and the parameters of the training in the file `experiments.json`. Different models and optimizers can be choosen for this task.
+You can configure the model and the parameters of the training in the file `experiments.json`. Different models and optimizers can be chosen for this task.
+
+The configuration for an experiment must have the following fields:
+
+    "experiment_name": {
+      "model": {
+        ...
+      },
+      "dataset": [
+        "list of the datasets to use"
+      ],
+      "batch_size": 32,
+      "nb_epoch": 10,
+      "target_seq_length": 270,
+      "workers": 8,
+      "use_multiprocessing": true
+    }
 
 ### Models
+
+New models can be added in the folder `smd/models` and loaded in `smd/models/model_loader.py`.
+
+Here are the architectures already implemented with their configuration:
 
 #### B-LTSM
 
@@ -84,6 +126,10 @@ You can configure the model and the parameters of the training in the file `expe
 
 ### Optimizers
 
+New optimizers can be added in the file `smd/models/model_loader.py.
+
+Here are the already implemented optimizers with their configuration.
+
 #### SGD + momentum
 
     "optimizer": {
@@ -92,3 +138,7 @@ You can configure the model and the parameters of the training in the file `expe
       "momentum": 0.9,
       "decay": 1e-6
     }
+
+## References
+
+[1] "Exploring Data Augmentation for Improved Singing Voice Detection with Neural Networks" by Jan Schlüter and Thomas Grill at the 16th International Society for Music Information Retrieval Conference (ISMIR 2015).
