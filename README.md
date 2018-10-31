@@ -4,9 +4,10 @@ Python framework for speech and music detection using Keras.
 
 ## Description
 
-This framework is designed to easily evaluation new models and configurations for the speech and music detection task using deep learning. Different architectures are already implemented like Temporal Convolutional Network (TCN), Bidirectional ConvLSTM (B-ConvLSTM) and Bidirectional LSTM (B-LTSM).
+This framework is designed to easily evaluate new models and configurations for the speech and music detection task using deep learning. More details about this task can be found in the description page for the [MIREX 2018 Speech/Music Detection task](https://www.music-ir.org/mirex/wiki/2018:Music_and/or_Speech_Detection). The evaluation implemented in this framework is the same as the one described in this page for comparison purposes.
 
-Moreover, new sequential architectures  and custom datasets can easily be added to the framework.
+Different architectures are already implemented like Temporal Convolutional Network (TCN), Bidirectional ConvLSTM (B-ConvLSTM) and Bidirectional LSTM (B-LTSM).
+Moreover, new sequential architectures and custom datasets can easily be added to the framework.
 
 ## Installation
 
@@ -43,7 +44,24 @@ Those parameters are:
 
 ## Data
 
+### Labels
+
+The label file of an audio can either be a text file containing one label for the whole file (speech, music or noise) or be a text file containing the list of the events happening in the audio. In the last case the audio will be considered "mixed" and the label file has to be formatted in this ways:
+
+    t_start1 t_stop1 music/speech
+    t_start2 t_stop2 music/speech
+    ...
+
+Each value is separated by a tabulation.
+
 ### Add a dataset
+
+The dataset has to be separated into two folders:
+
+- The folder containing all the audio files and their corresponding label text files.
+- The folder containing the repartition of the data between each set (train, validation or test) for each type of label (speech, music, noise or mixed). The files contain the name of the corresponding audio with no extension and the possible files are `mixed_train, mixed_val, mixed_test, music_train, music_val, speech_train, speech_val` or `noise_train`.
+
+Then, add the name of the two folders in `datasets.json` and run the file `prepare_dataset/prepare_audio.py` to do the pre-processing pre-training of the audio.
 
 ### Pre-processing
 
@@ -114,10 +132,11 @@ Here are the architectures already implemented with their configuration:
 
     "model": {
       "type": "tcn",
-      "nb_filters": 32,
+      "list_n_filters": [32],
       "kernel_size": 4,
       "dilations": [1, 2, 4, 8],
       "nb_stacks": 3,
+      "n_layers": 1,
       "activation": "norm_relu",
       "use_skip_connections": true,
       "dropout_rate": 0.05,
@@ -126,7 +145,7 @@ Here are the architectures already implemented with their configuration:
 
 ### Optimizers
 
-New optimizers can be added in the file `smd/models/model_loader.py.
+New optimizers can be added in the file `smd/models/model_loader.py`.
 
 Here are the already implemented optimizers with their configuration.
 
@@ -138,6 +157,8 @@ Here are the already implemented optimizers with their configuration.
       "momentum": 0.9,
       "decay": 1e-6
     }
+
+## Training
 
 ## References
 

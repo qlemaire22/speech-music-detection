@@ -17,11 +17,12 @@ def load_model(cfg):
                                    cfg["dilation_rate_list"],
                                    cfg["dropout"])
     elif cfg["type"] == "tcn":
-        model = create_tcn(nb_filters=cfg["nb_filters"],
+        model = create_tcn(nb_filters=cfg["list_n_filters"],
                            kernel_size=cfg["kernel_size"],
                            dilations=cfg["dilations"],
                            nb_stacks=cfg["nb_stacks"],
                            activation=cfg["activation"],
+                           n_layers=cfg["n_layers"],
                            use_skip_connections=cfg["use_skip_connections"],
                            dropout_rate=cfg["dropout_rate"])
     else:

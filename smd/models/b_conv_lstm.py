@@ -16,7 +16,7 @@ def create_b_conv_lstm(filters_list=[5, 5], kernel_size_list=[3, 3], stride_list
                                      dilation_rate=dilation_rate_list[i],
                                      return_sequences=True,
                                      dropout=dropout))(x)
-    print(x._keras_shape)
+
     x = Reshape((-1, x._keras_shape[4]))(x)
     output_layer = TimeDistributed(Dense(config.CLASSES, activation='sigmoid'))(x)
     model = Model(input_layer, output_layer)

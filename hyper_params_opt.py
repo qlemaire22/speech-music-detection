@@ -2,9 +2,9 @@ import numpy as np
 
 from hyperopt import Trials, STATUS_OK, tpe
 from hyperas import optim
-from hyperas.distributions import choice, uniform
+from hyperas.distributions import choice, uniform, conditional
 
-from smd.models import tcn
+from smd.models import tcn, b_lstm, b_conv_lstm
 import smd.config as config
 import smd.utils as utils
 from smd.data.data_generator import DataGenerator
@@ -75,17 +75,7 @@ def data():
     return train_set, val_set
 
 
-def fit_tcn(train_set, val_set):
-    """
-    Model providing function:
-
-    Create Keras model with double curly brackets dropped-in as needed.
-    Return value has to be a valid python dictionary with two customary keys:
-        - loss: Specify a numeric evaluation metric to be minimized
-        - status: Just use STATUS_OK and see hyperopt documentation if not feasible
-    The last one is optional, though recommended, namely:
-        - model: specify the model just created so that we can later use it again.
-    """
+def fit_b_lstm(train_set, val_set):
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -95,34 +85,228 @@ def fit_tcn(train_set, val_set):
            },
            "batch_size": 32,
            "workers": 8,
-           "use_multiprocessing": True
+           "use_multiprocessing": True,
+           "n_epochs": 5,
+           "max_params": 1000000
            }
+    n_layer = {{choice([2, 3, 4, 5])}}
+    layers = []
 
-    model = tcn.create_tcn(nb_filters={{choice([16, 32, 64, 128])}},
-                           kernel_size={{choice([3, 5, 7, 9])}},
-                           dilations={{choice([[2 ** i for i in range(4)],
-                                               [2 ** i for i in range(5)],
-                                               [2 ** i for i in range(6)],
-                                               [2 ** i for i in range(7)],
-                                               [2 ** i for i in range(8)]])}},
-                           nb_stacks={{choice([3, 4, 5, 6])}},
-                           use_skip_connections={{choice([True, False])}},
-                           dropout_rate={{uniform(0.05, 0.5)}})
+    layers.append(
+        {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+    if conditional(n_layer) == 2:
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+    elif conditional(n_layer) == 3:
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+    elif conditional(n_layer) == 4:
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+    elif conditional(n_layer) == 5:
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+        layers.append(
+            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+
+    model = b_lstm.create_b_lstm(
+        hidden_units=layers, dropout={{uniform(0.05, 0.5)}})
+
+    n_params = model.count_params()
+    print("n_params: " + str(n_params))
+    if n_params > cfg["max_params"]:
+        print("Too much parameters")
+        return {'loss': np.inf, 'status': STATUS_OK, 'model': model}
 
     optimizer = optimizers.SGD(
-        lr=cfg["optimizer"]["lr"], momentum=0.9, decay=cfg["optimizer"]["decay"])
+        lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
 
     model.compile(loss=config.LOSS, metrics=config.METRICS,
                   optimizer=optimizer)
 
     result = model.fit_generator(train_set,
-                                 epochs=5,
+                                 epochs=cfg["n_epochs"],
                                  validation_data=val_set,
                                  workers=cfg["workers"],
                                  use_multiprocessing=cfg["use_multiprocessing"],
                                  shuffle=True
                                  )
-    # get the highest validation accuracy of the training epochs
+
+    validation_loss = np.amin(result.history['val_loss'])
+    print('Best validation acc of epoch:', validation_loss)
+    return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
+
+
+def fit_b_conv_lstm(train_set, val_set):
+    cfg = {"optimizer":
+           {
+               "name": "SGD",
+               "lr": 0.001,
+               "momentum": 0.9,
+               "decay": 0
+           },
+           "batch_size": 32,
+           "workers": 8,
+           "use_multiprocessing": True,
+           "n_epochs": 5,
+           "max_params": 1000000
+           }
+    n_layer = {{choice([2, 3, 4, 5])}}
+    filters_list = []
+    kernel_size_list = []
+    stride_list = []
+    dilation_rate_list = []
+
+    filters_list.append({{choice([16, 32, 64])}})
+    filters_list.append({{choice([16, 32, 64])}})
+    kernel_size_list.append({{choice([1, 3, 5])}})
+    kernel_size_list.append({{choice([1, 3, 5])}})
+    stride_list.append(1)
+    stride_list.append(1)
+    dilation_rate_list.append(1)
+    dilation_rate_list.append(1)
+    if conditional(n_layer) == 3:
+        filters_list.append({{choice([16, 32, 64])}})
+        kernel_size_list.append({{choice([1, 3, 5])}})
+        stride_list.append(1)
+        dilation_rate_list.append(1)
+    elif conditional(n_layer) == 4:
+        filters_list.append({{choice([16, 32, 64])}})
+        filters_list.append({{choice([16, 32, 64])}})
+        kernel_size_list.append({{choice([1, 3, 5])}})
+        kernel_size_list.append({{choice([1, 3, 5])}})
+        stride_list.append(1)
+        stride_list.append(1)
+        dilation_rate_list.append(1)
+        dilation_rate_list.append(1)
+    elif conditional(n_layer) == 5:
+        filters_list.append({{choice([16, 32, 64])}})
+        filters_list.append({{choice([16, 32, 64])}})
+        filters_list.append({{choice([16, 32, 64])}})
+        kernel_size_list.append({{choice([1, 3, 5])}})
+        kernel_size_list.append({{choice([1, 3, 5])}})
+        kernel_size_list.append({{choice([1, 3, 5])}})
+        stride_list.append(1)
+        stride_list.append(1)
+        dilation_rate_list.append(1)
+        dilation_rate_list.append(1)
+        stride_list.append(1)
+        dilation_rate_list.append(1)
+
+    model = b_conv_lstm.create_b_conv_lstm(filters_list=filters_list,
+                                           kernel_size_list=kernel_size_list,
+                                           stride_list=stride_list,
+                                           dilation_rate_list=dilation_rate_list,
+                                           dropout={{uniform(0.05, 0.5)}})
+    n_params = model.count_params()
+    print("n_params: " + str(n_params))
+    if n_params > cfg["max_params"]:
+        print("Too much parameters")
+        return {'loss': np.inf, 'status': STATUS_OK, 'model': model}
+
+    optimizer = optimizers.SGD(
+        lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
+
+    model.compile(loss=config.LOSS, metrics=config.METRICS,
+                  optimizer=optimizer)
+
+    result = model.fit_generator(train_set,
+                                 epochs=cfg["n_epochs"],
+                                 validation_data=val_set,
+                                 workers=cfg["workers"],
+                                 use_multiprocessing=cfg["use_multiprocessing"],
+                                 shuffle=True
+                                 )
+
+    validation_loss = np.amin(result.history['val_loss'])
+    print('Best validation acc of epoch:', validation_loss)
+    return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
+
+
+def fit_tcn(train_set, val_set):
+    cfg = {"optimizer":
+           {
+               "name": "SGD",
+               "lr": 0.001,
+               "momentum": 0.9,
+               "decay": 0
+           },
+           "batch_size": 32,
+           "workers": 8,
+           "use_multiprocessing": True,
+           "n_epochs": 5,
+           "max_params": 1000000
+           }
+    nb_filters = []
+    kernel_size = {{choice([3, 5, 7, 9, 11, 13, 15, 17, 19])}}
+    dilations = {{choice([[2 ** i for i in range(4)],
+                          [2 ** i for i in range(5)],
+                          [2 ** i for i in range(6)],
+                          [2 ** i for i in range(7)],
+                          [2 ** i for i in range(8)]])}}
+    nb_stacks = {{choice([3, 4, 5, 6, 7, 8, 9, 10])}}
+    use_skip_connections = {{choice([True, False])}}
+    n_layers = {{choice([1, 2, 3, 4, 5])}}
+
+    nb_filters.append({{choice([16, 32, 64])}})
+    if conditional(n_layers) == 2:
+        nb_filters.append({{choice([16, 32, 64])}})
+    if conditional(n_layers) == 3:
+        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([16, 32, 64])}})
+    if conditional(n_layers) == 4:
+        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([16, 32, 64])}})
+    if conditional(n_layers) == 5:
+        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([16, 32, 64])}})
+
+    model = tcn.create_tcn(list_n_filters=nb_filters,
+                           kernel_size=kernel_size,
+                           dilations=dilations,
+                           nb_stacks=nb_stacks,
+                           n_layers=n_layers,
+                           use_skip_connections=use_skip_connections,
+                           dropout_rate={{uniform(0.05, 0.5)}})
+
+    n_params = model.count_params()
+    print("n_params: " + str(n_params))
+    print(nb_filters)
+    print(kernel_size)
+    print(dilations)
+    print(nb_stacks)
+    if n_params > cfg["max_params"]:
+        print("Too much parameters")
+        return {'loss': np.inf, 'status': STATUS_OK, 'model': model}
+
+    optimizer = optimizers.SGD(
+        lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
+
+    model.compile(loss=config.LOSS, metrics=config.METRICS,
+                  optimizer=optimizer)
+
+    result = model.fit_generator(train_set,
+                                 epochs=cfg["n_epochs"],
+                                 validation_data=val_set,
+                                 workers=cfg["workers"],
+                                 use_multiprocessing=cfg["use_multiprocessing"],
+                                 shuffle=True
+                                 )
+
     validation_loss = np.amin(result.history['val_loss'])
     print('Best validation acc of epoch:', validation_loss)
     return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
