@@ -102,5 +102,32 @@
     "target_seq_length": 300,
     "workers": 8,
     "use_multiprocessing": true
-  }
+  },
+  "test5": {
+    "model": {
+      "type": "tcn",
+      "nb_filters": [32],
+      "kernel_size": 4,
+      "dilations": [1, 2, 4, 8, 16],
+      "nb_stacks": 3,
+      "activation": "norm_relu",
+      "n_layers": 1,
+      "use_skip_connections": true,
+      "dropout_rate": 0.05,
+      "optimizer": {
+        "name": "SGD",
+        "lr": 0.001,
+        "momentum": 0.9,
+        "decay": 0
+      }
+    },
+    "dataset": [
+      "muspeak", "gtzan", "scheirer_slaney"
+    ],
+    "batch_size": 32,
+    "nb_epoch": 10,
+    "target_seq_length": 270,
+    "workers": 8,
+    "use_multiprocessing": true
+  },
 }
