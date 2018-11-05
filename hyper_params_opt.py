@@ -126,7 +126,7 @@ def fit_b_lstm(train_set, val_set):
     print("n_params: " + str(n_params))
     if n_params > cfg["max_params"]:
         print("Too much parameters")
-        return {'loss': np.inf, 'status': STATUS_OK, 'model': model}
+        return {'loss': 5, 'status': STATUS_OK, 'model': model}
 
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
@@ -212,7 +212,7 @@ def fit_b_conv_lstm(train_set, val_set):
     print("n_params: " + str(n_params))
     if n_params > cfg["max_params"]:
         print("Too much parameters")
-        return {'loss': np.inf, 'status': STATUS_OK, 'model': model}
+        return {'loss': 5, 'status': STATUS_OK, 'model': model}
 
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
@@ -291,7 +291,7 @@ def fit_tcn(train_set, val_set):
     print(nb_stacks)
     if n_params > cfg["max_params"]:
         print("Too much parameters")
-        return {'loss': np.inf, 'status': STATUS_OK, 'model': model}
+        return {'loss': 5, 'status': STATUS_OK, 'model': model}
 
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
@@ -313,10 +313,11 @@ def fit_tcn(train_set, val_set):
 
 
 if __name__ == '__main__':
+    MAX_EVALS = 500
     best_run, best_model = optim.minimize(model=fit_tcn,
                                           data=data,
                                           algo=tpe.suggest,
-                                          max_evals=100,
+                                          max_evals=MAX_EVALS,
                                           trials=Trials())
     print("Best found values:")
     print(best_run)

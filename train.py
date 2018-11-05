@@ -69,11 +69,11 @@ def train(train_set, val_set, cfg, config_name, resume, model_path):
 
     early_stopping = EarlyStopping(monitor='val_loss',
                                    min_delta=0,
-                                   patience=3,
+                                   patience=4,
                                    verbose=0, mode='auto')
 
     lr_schedule = ReduceLROnPlateau(
-        monitor='val_loss', factor=0.1, patience=1, verbose=1, mode='auto', min_lr=10e-7)
+        monitor='val_loss', factor=0.1, patience=2, verbose=1, mode='auto', min_lr=10e-7)
 
     callback_list = [save_ckpt, early_stopping, lr_schedule, csv_logger]
 

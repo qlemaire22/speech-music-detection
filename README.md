@@ -65,13 +65,13 @@ Then, add the name of the two folders in `datasets.json` and run the file `prepa
 
 ### Pre-processing
 
-Prior to the learning phase, each audio file is resampled to a 22.05kHz mono audio of maximum 1mn30 (the files are split). Then a Short-Time Fourier Transform (STFT) with a Hann window, a frame length of 1024 and Hop size of 512 is applied and only the magnitude of the energy spectrogram is kept. Those matrices are then stored for the learning phase.
+Prior to the learning phase, each audio file is resampled to a 22.05kHz mono audio of maximum 1mn30 (the files are split). Then a Short-Time Fourier Transform (STFT) with a Hann window, a frame length of 1024 and Hop size of 512 is applied and only the magnitude of the power spectrogram is kept. Those matrices are then stored for the learning phase.
 
 During the learning phase, the spectrograms are loaded, then deformed by the data augmentation and a mel filterbank with 100 coefficients between 27.5 and 8000 Hz is applied. Those coefficients are then put on a log scale, normalized over the training set and inputted into the network.
 
 ### Data Augmentation
 
-Different transformations are applied to each training sample to do some data augmentation. For speed purposes, the data augmentation is not applied to the audio signal but on the magnitude of the energy spectrogram. The implemented transformations are:
+Different transformations are applied to each training sample to do some data augmentation. For speed purposes, the data augmentation is not applied to the audio signal but on the magnitude of the power spectrogram. The implemented transformations are:
 
 - Time stretching
 - Pitch shifting
