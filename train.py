@@ -102,7 +102,7 @@ if __name__ == "__main__":
     parser.add_argument('--resume', type=bool, default=False,
                         help='set to true to restart a previous starning')
 
-    parser.add_argument('--resume_model', type=str, default="checkpoint/weights.%s.hdf5",
+    parser.add_argument('--model', type=str, default="checkpoint/weights.%s.hdf5",
                         help='path of the model to load when the starting is resumed')
 
     args = parser.parse_args()
@@ -134,4 +134,4 @@ if __name__ == "__main__":
                             dataset.get_training_std(),
                             set_type="val")
 
-    train(train_set, val_set, cfg, args.config, args.resume, args.resume_model)
+    train(train_set, val_set, cfg, args.config, args.resume, args.model)

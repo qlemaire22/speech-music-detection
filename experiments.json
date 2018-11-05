@@ -47,7 +47,7 @@
   "test3": {
     "model": {
       "type": "tcn",
-      "nb_filters": [32],
+      "list_n_filters": [32],
       "kernel_size": 4,
       "dilations": [1, 2, 4, 8],
       "nb_stacks": 3,
@@ -74,7 +74,7 @@
   "test4": {
     "model": {
       "type": "tcn",
-      "nb_filters": [32],
+      "list_n_filters": [32],
       "kernel_size": 4,
       "dilations": [1, 2, 4, 8, 16, 32],
       "nb_stacks": 3,
@@ -106,7 +106,7 @@
   "test5": {
     "model": {
       "type": "tcn",
-      "nb_filters": [32],
+      "list_n_filters": [32],
       "kernel_size": 4,
       "dilations": [1, 2, 4, 8, 16],
       "nb_stacks": 3,
@@ -129,5 +129,5 @@
     "target_seq_length": 270,
     "workers": 8,
     "use_multiprocessing": true
-  },
+  }
 }

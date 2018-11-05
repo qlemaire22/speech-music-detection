@@ -69,7 +69,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_location', type=str, default="/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
                         help='the location of the data')
 
-    parser.add_argument('--resume_model', type=str, default="checkpoint/weights.%s.hdf5",
+    parser.add_argument('--model', type=str, default="checkpoint/weights.%s.hdf5",
                         help='path of the model to load when the starting is resumed')
 
     args = parser.parse_args()
@@ -93,4 +93,4 @@ if __name__ == "__main__":
                              dataset.get_training_std(),
                              set_type="test")
 
-    evaluate(test_set, cfg, args.config, args.resume_model, args.save_path)
+    evaluate(test_set, cfg, args.config, args.model, args.save_path)
