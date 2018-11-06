@@ -13,10 +13,11 @@ from smd.data.data_augmentation import random_loudness_spec, random_filter_spec,
 from smd.data import preprocessing
 
 from keras import optimizers
+import time
 
 
 def data():
-    cfg = {"dataset": ["ofai"],
+    cfg = {"dataset": ["ofai", "muspeak"],
            "data_location": "/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
            "target_seq_length": 270,
            "batch_size": 32
@@ -314,11 +315,15 @@ def fit_tcn(train_set, val_set):
 
 
 if __name__ == '__main__':
-    MAX_EVALS = 500
+    MAX_EVALS = 100
+    t0 = time.time()
     best_run, best_model = optim.minimize(model=fit_tcn,
                                           data=data,
                                           algo=tpe.suggest,
                                           max_evals=MAX_EVALS,
                                           trials=Trials())
+    t1 = time.time()
+    print("Total time: " + str(t1 - t0))
+    print("Time by eval: " + str((t1 - t0) / MAX_EVALS))
     print("Best found values:")
     print(best_run)
