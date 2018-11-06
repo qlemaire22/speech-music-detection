@@ -253,7 +253,8 @@ def fit_tcn(train_set, val_set):
                           [2 ** i for i in range(5)],
                           [2 ** i for i in range(6)],
                           [2 ** i for i in range(7)],
-                          [2 ** i for i in range(8)]])}}
+                          [2 ** i for i in range(8)],
+                          [2 ** i for i in range(9)]])}}
     nb_stacks = {{choice([3, 4, 5, 6, 7, 8, 9, 10])}}
     use_skip_connections = {{choice([True, False])}}
     n_layers = {{choice([1, 2, 3, 4, 5])}}

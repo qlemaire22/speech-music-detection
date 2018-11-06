@@ -116,3 +116,4 @@ eval_*
 audio_test/
 trained/
 temp_*
+result/
