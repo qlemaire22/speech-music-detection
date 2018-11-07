@@ -140,7 +140,8 @@ def fit_b_lstm(train_set, val_set):
                                  validation_data=val_set,
                                  workers=cfg["workers"],
                                  use_multiprocessing=cfg["use_multiprocessing"],
-                                 shuffle=True
+                                 shuffle=True,
+                                 verbose=0
                                  )
 
     validation_loss = np.amin(result.history['val_loss'])
@@ -149,6 +150,7 @@ def fit_b_lstm(train_set, val_set):
 
 
 def fit_b_conv_lstm(train_set, val_set):
+    print("New iteration")
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -226,7 +228,8 @@ def fit_b_conv_lstm(train_set, val_set):
                                  validation_data=val_set,
                                  workers=cfg["workers"],
                                  use_multiprocessing=cfg["use_multiprocessing"],
-                                 shuffle=True
+                                 shuffle=True,
+                                 verbose=0
                                  )
 
     validation_loss = np.amin(result.history['val_loss'])
@@ -234,7 +237,8 @@ def fit_b_conv_lstm(train_set, val_set):
     return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
 
 
-def fit_tcn(train_set, val_set):
+def fit_tcn(pbar, train_set, val_set):
+    pbar.update()
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -243,8 +247,8 @@ def fit_tcn(train_set, val_set):
                "decay": 0
            },
            "batch_size": 32,
-           "workers": 8,
-           "use_multiprocessing": True,
+           "workers": 1,
+           "use_multiprocessing": False,
            "n_epochs": 5,
            "max_params": 1000000
            }
@@ -286,11 +290,6 @@ def fit_tcn(train_set, val_set):
                            dropout_rate={{uniform(0.05, 0.5)}})
 
     n_params = model.count_params()
-    print("n_params: " + str(n_params))
-    print(nb_filters)
-    print(kernel_size)
-    print(dilations)
-    print(nb_stacks)
     if n_params > cfg["max_params"]:
         print("Too much parameters")
         return {'loss': 5, 'status': STATUS_OK, 'model': model}
@@ -306,7 +305,8 @@ def fit_tcn(train_set, val_set):
                                  validation_data=val_set,
                                  workers=cfg["workers"],
                                  use_multiprocessing=cfg["use_multiprocessing"],
-                                 shuffle=True
+                                 shuffle=True,
+                                 verbose=0
                                  )
 
     validation_loss = np.amin(result.history['val_loss'])
@@ -317,6 +317,7 @@ def fit_tcn(train_set, val_set):
 if __name__ == '__main__':
     MAX_EVALS = 100
     t0 = time.time()
+
     best_run, best_model = optim.minimize(model=fit_tcn,
                                           data=data,
                                           algo=tpe.suggest,
