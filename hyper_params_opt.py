@@ -14,6 +14,7 @@ from smd.data import preprocessing
 
 from keras import optimizers
 import time
+import datetime
 
 
 def data():
@@ -77,6 +78,7 @@ def data():
 
 
 def fit_b_lstm(train_set, val_set):
+    print(datetime.datetime.now() + "   new iteration...")
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -150,7 +152,7 @@ def fit_b_lstm(train_set, val_set):
 
 
 def fit_b_conv_lstm(train_set, val_set):
-    print("New iteration")
+    print(datetime.datetime.now() + "   new iteration...")
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -237,8 +239,8 @@ def fit_b_conv_lstm(train_set, val_set):
     return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
 
 
-def fit_tcn(pbar, train_set, val_set):
-    pbar.update()
+def fit_tcn(train_set, val_set):
+    print(datetime.datetime.now() + "   new iteration...")
     cfg = {"optimizer":
            {
                "name": "SGD",
