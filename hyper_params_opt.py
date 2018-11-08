@@ -16,6 +16,9 @@ from keras import optimizers
 import time
 import datetime
 
+import multiprocessing
+multiprocessing.set_start_method('spawn')
+
 
 def data():
     cfg = {"dataset": ["ofai", "muspeak"],
@@ -78,7 +81,7 @@ def data():
 
 
 def fit_b_lstm(train_set, val_set):
-    print(datetime.datetime.now() + "   new iteration...")
+    print(str(datetime.datetime.now()) + "   new iteration...")
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -152,7 +155,7 @@ def fit_b_lstm(train_set, val_set):
 
 
 def fit_b_conv_lstm(train_set, val_set):
-    print(datetime.datetime.now() + "   new iteration...")
+    print(str(datetime.datetime.now()) + "   new iteration...")
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -240,7 +243,7 @@ def fit_b_conv_lstm(train_set, val_set):
 
 
 def fit_tcn(train_set, val_set):
-    print(datetime.datetime.now() + "   new iteration...")
+    print(str(datetime.datetime.now()) + "   new iteration...")
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -249,8 +252,8 @@ def fit_tcn(train_set, val_set):
                "decay": 0
            },
            "batch_size": 32,
-           "workers": 1,
-           "use_multiprocessing": False,
+           "workers": 8,
+           "use_multiprocessing": True,
            "n_epochs": 5,
            "max_params": 1000000
            }
