@@ -15,13 +15,12 @@ from smd.data import preprocessing
 from keras import optimizers
 import time
 import datetime
-
-import multiprocessing
-multiprocessing.set_start_method('spawn')
+import csv
 
 
 def data():
-    cfg = {"dataset": ["ofai", "muspeak"],
+    n_eval = 0
+    cfg = {"dataset": ["ofai"],
            "data_location": "/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
            "target_seq_length": 270,
            "batch_size": 32
@@ -81,7 +80,14 @@ def data():
 
 
 def fit_b_lstm(train_set, val_set):
-    print(str(datetime.datetime.now()) + "   new iteration...")
+    global n_eval
+
+    n_eval += 1
+    print(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval))
+
+    with open("hyper_opt_result.txt", 'a') as f:
+        f.write(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval) + "\n")
+
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -95,7 +101,7 @@ def fit_b_lstm(train_set, val_set):
            "n_epochs": 5,
            "max_params": 1000000
            }
-    n_layer = {{choice([2, 3, 4, 5])}}
+    n_layer = {{choice([1, 2, 3, 4])}}
     layers = []
 
     layers.append(
@@ -115,24 +121,13 @@ def fit_b_lstm(train_set, val_set):
             {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
         layers.append(
             {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-    elif conditional(n_layer) == 5:
-        layers.append(
-            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-        layers.append(
-            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-        layers.append(
-            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-        layers.append(
-            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
 
     model = b_lstm.create_b_lstm(
         hidden_units=layers, dropout={{uniform(0.05, 0.5)}})
 
     n_params = model.count_params()
-    print("n_params: " + str(n_params))
-    if n_params > cfg["max_params"]:
-        print("Too much parameters")
-        return {'loss': 5, 'status': STATUS_OK, 'model': model}
+    print(n_params)
+    print(space)
 
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
@@ -150,12 +145,27 @@ def fit_b_lstm(train_set, val_set):
                                  )
 
     validation_loss = np.amin(result.history['val_loss'])
+
+    csv_line = [n_eval, n_params, validation_loss]
+    for key in space.keys():
+        csv_line.append(space[key])
+    with open(r'fit_tcn_log.csv', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(csv_line)
+
     print('Best validation acc of epoch:', validation_loss)
     return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
 
 
 def fit_b_conv_lstm(train_set, val_set):
-    print(str(datetime.datetime.now()) + "   new iteration...")
+    global n_eval
+
+    n_eval += 1
+    print(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval))
+
+    with open("hyper_opt_result.txt", 'a') as f:
+        f.write(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval) + "\n")
+
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -164,19 +174,19 @@ def fit_b_conv_lstm(train_set, val_set):
                "decay": 0
            },
            "batch_size": 32,
-           "workers": 8,
-           "use_multiprocessing": True,
+           "workers": 1,
+           "use_multiprocessing": False,
            "n_epochs": 5,
            "max_params": 1000000
            }
-    n_layer = {{choice([2, 3, 4, 5])}}
+    n_layer = {{choice([1, 2, 3, 4])}}
     filters_list = []
     kernel_size_list = []
     stride_list = []
     dilation_rate_list = []
 
-    filters_list.append({{choice([16, 32, 64])}})
-    filters_list.append({{choice([16, 32, 64])}})
+    filters_list.append({{choice([8, 16, 32])}})
+    filters_list.append({{choice([8, 16, 32])}})
     kernel_size_list.append({{choice([1, 3, 5])}})
     kernel_size_list.append({{choice([1, 3, 5])}})
     stride_list.append(1)
@@ -184,31 +194,18 @@ def fit_b_conv_lstm(train_set, val_set):
     dilation_rate_list.append(1)
     dilation_rate_list.append(1)
     if conditional(n_layer) == 3:
-        filters_list.append({{choice([16, 32, 64])}})
+        filters_list.append({{choice([8, 16, 32])}})
         kernel_size_list.append({{choice([1, 3, 5])}})
         stride_list.append(1)
         dilation_rate_list.append(1)
     elif conditional(n_layer) == 4:
-        filters_list.append({{choice([16, 32, 64])}})
-        filters_list.append({{choice([16, 32, 64])}})
+        filters_list.append({{choice([8, 16, 32])}})
+        filters_list.append({{choice([8, 16, 32])}})
         kernel_size_list.append({{choice([1, 3, 5])}})
         kernel_size_list.append({{choice([1, 3, 5])}})
         stride_list.append(1)
         stride_list.append(1)
         dilation_rate_list.append(1)
-        dilation_rate_list.append(1)
-    elif conditional(n_layer) == 5:
-        filters_list.append({{choice([16, 32, 64])}})
-        filters_list.append({{choice([16, 32, 64])}})
-        filters_list.append({{choice([16, 32, 64])}})
-        kernel_size_list.append({{choice([1, 3, 5])}})
-        kernel_size_list.append({{choice([1, 3, 5])}})
-        kernel_size_list.append({{choice([1, 3, 5])}})
-        stride_list.append(1)
-        stride_list.append(1)
-        dilation_rate_list.append(1)
-        dilation_rate_list.append(1)
-        stride_list.append(1)
         dilation_rate_list.append(1)
 
     model = b_conv_lstm.create_b_conv_lstm(filters_list=filters_list,
@@ -217,10 +214,8 @@ def fit_b_conv_lstm(train_set, val_set):
                                            dilation_rate_list=dilation_rate_list,
                                            dropout={{uniform(0.05, 0.5)}})
     n_params = model.count_params()
-    print("n_params: " + str(n_params))
-    if n_params > cfg["max_params"]:
-        print("Too much parameters")
-        return {'loss': 5, 'status': STATUS_OK, 'model': model}
+    print(n_params)
+    print(space)
 
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
@@ -238,12 +233,27 @@ def fit_b_conv_lstm(train_set, val_set):
                                  )
 
     validation_loss = np.amin(result.history['val_loss'])
+
+    csv_line = [n_eval, n_params, validation_loss]
+    for key in space.keys:
+        csv_line.append(space[key])
+    with open(r'fit_tcn_log', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(csv_line)
+
     print('Best validation acc of epoch:', validation_loss)
     return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
 
 
 def fit_tcn(train_set, val_set):
-    print(str(datetime.datetime.now()) + "   new iteration...")
+    global n_eval
+
+    n_eval += 1
+    print(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval))
+
+    with open("hyper_opt_result.txt", 'a') as f:
+        f.write(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval) + "\n")
+
     cfg = {"optimizer":
            {
                "name": "SGD",
@@ -254,7 +264,7 @@ def fit_tcn(train_set, val_set):
            "batch_size": 32,
            "workers": 8,
            "use_multiprocessing": True,
-           "n_epochs": 5,
+           "n_epochs": 1,
            "max_params": 1000000
            }
     nb_filters = []
@@ -267,24 +277,18 @@ def fit_tcn(train_set, val_set):
                           [2 ** i for i in range(9)]])}}
     nb_stacks = {{choice([3, 4, 5, 6, 7, 8, 9, 10])}}
     use_skip_connections = {{choice([True, False])}}
-    n_layers = {{choice([1, 2, 3, 4, 5])}}
+    n_layers = {{choice([1, 2, 3, 4])}}
 
-    nb_filters.append({{choice([16, 32, 64])}})
+    nb_filters.append({{choice([8, 16, 32])}})
     if conditional(n_layers) == 2:
-        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([8, 16, 32])}})
     if conditional(n_layers) == 3:
-        nb_filters.append({{choice([16, 32, 64])}})
-        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([8, 16, 32])}})
+        nb_filters.append({{choice([8, 16, 32])}})
     if conditional(n_layers) == 4:
-        nb_filters.append({{choice([16, 32, 64])}})
-        nb_filters.append({{choice([16, 32, 64])}})
-        nb_filters.append({{choice([16, 32, 64])}})
-    if conditional(n_layers) == 5:
-        nb_filters.append({{choice([16, 32, 64])}})
-        nb_filters.append({{choice([16, 32, 64])}})
-        nb_filters.append({{choice([16, 32, 64])}})
-        nb_filters.append({{choice([16, 32, 64])}})
-        nb_filters.append({{choice([16, 32, 64])}})
+        nb_filters.append({{choice([8, 16, 32])}})
+        nb_filters.append({{choice([8, 16, 32])}})
+        nb_filters.append({{choice([8, 16, 32])}})
 
     model = tcn.create_tcn(list_n_filters=nb_filters,
                            kernel_size=kernel_size,
@@ -295,9 +299,8 @@ def fit_tcn(train_set, val_set):
                            dropout_rate={{uniform(0.05, 0.5)}})
 
     n_params = model.count_params()
-    if n_params > cfg["max_params"]:
-        print("Too much parameters")
-        return {'loss': 5, 'status': STATUS_OK, 'model': model}
+    print(n_params)
+    print(space)
 
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
@@ -315,12 +318,20 @@ def fit_tcn(train_set, val_set):
                                  )
 
     validation_loss = np.amin(result.history['val_loss'])
+
+    csv_line = [n_eval, n_params, validation_loss]
+    for key in space.keys():
+        csv_line.append(space[key])
+    with open(r'fit_tcn_log.csv', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(csv_line)
+
     print('Best validation acc of epoch:', validation_loss)
     return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
 
 
 if __name__ == '__main__':
-    MAX_EVALS = 100
+    MAX_EVALS = 1
     t0 = time.time()
 
     best_run, best_model = optim.minimize(model=fit_tcn,
@@ -328,8 +339,18 @@ if __name__ == '__main__':
                                           algo=tpe.suggest,
                                           max_evals=MAX_EVALS,
                                           trials=Trials())
+
     t1 = time.time()
+    print("Number of evaluations: " + str(MAX_EVALS))
     print("Total time: " + str(t1 - t0))
     print("Time by eval: " + str((t1 - t0) / MAX_EVALS))
     print("Best found values:")
     print(best_run)
+
+    with open("hyper_opt_result.txt", 'a') as f:
+        f.write("Number of evaluations: " + str(MAX_EVALS) + "\n")
+        f.write("Total time: " + str(t1 - t0) + "\n")
+        f.write("Time by eval: " + str((t1 - t0) / MAX_EVALS) + "\n")
+        f.write("Best found values:" + "\n")
+        for key in best_run.keys():
+            f.write(str(key) + " " + str(best_run[key]) + "\n")

@@ -18,8 +18,12 @@ def create_tcn(list_n_filters=[8],
     input_layer = Input(shape=(None, config.N_MELS))
 
     for i in range(n_layers):
-        x = TCN(list_n_filters[i], kernel_size, nb_stacks, dilations, activation,
-                use_skip_connections, dropout_rate, return_sequences=True)(input_layer)
+        if i == 0:
+            x = TCN(list_n_filters[i], kernel_size, nb_stacks, dilations, activation,
+                    use_skip_connections, dropout_rate, return_sequences=True)(input_layer)
+        else:
+            x = TCN(list_n_filters[i], kernel_size, nb_stacks, dilations, activation,
+                    use_skip_connections, dropout_rate, return_sequences=True, name="tcn" + str(i))(x)
 
     x = Dense(config.CLASSES)(x)
     x = Activation('sigmoid')(x)
