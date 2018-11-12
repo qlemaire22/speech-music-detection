@@ -20,7 +20,7 @@ import csv
 
 def data():
     n_eval = 0
-    cfg = {"dataset": ["ofai"],
+    cfg = {"dataset": ["ofai", "muspeak"],
            "data_location": "/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
            "target_seq_length": 270,
            "batch_size": 32
@@ -98,8 +98,7 @@ def fit_b_lstm(train_set, val_set):
            "batch_size": 32,
            "workers": 8,
            "use_multiprocessing": True,
-           "n_epochs": 5,
-           "max_params": 1000000
+           "n_epochs": 5
            }
     n_layer = {{choice([1, 2, 3, 4])}}
     layers = []
@@ -174,10 +173,9 @@ def fit_b_conv_lstm(train_set, val_set):
                "decay": 0
            },
            "batch_size": 32,
-           "workers": 1,
-           "use_multiprocessing": False,
-           "n_epochs": 5,
-           "max_params": 1000000
+           "workers": 8,
+           "use_multiprocessing": True,
+           "n_epochs": 5
            }
     n_layer = {{choice([1, 2, 3, 4])}}
     filters_list = []
@@ -264,8 +262,7 @@ def fit_tcn(train_set, val_set):
            "batch_size": 32,
            "workers": 8,
            "use_multiprocessing": True,
-           "n_epochs": 1,
-           "max_params": 1000000
+           "n_epochs": 1
            }
     nb_filters = []
     kernel_size = {{choice([3, 5, 7, 9, 11, 13, 15, 17, 19])}}
