@@ -95,7 +95,6 @@ def fit_b_lstm(train_set, val_set):
                "momentum": 0.9,
                "decay": 0
            },
-           "batch_size": 32,
            "workers": 8,
            "use_multiprocessing": True,
            "n_epochs": 5
@@ -148,7 +147,7 @@ def fit_b_lstm(train_set, val_set):
     csv_line = [n_eval, n_params, validation_loss]
     for key in space.keys():
         csv_line.append(space[key])
-    with open(r'fit_tcn_log.csv', 'a') as f:
+    with open(r'fit_b_lstm.csv', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(csv_line)
 
@@ -172,7 +171,6 @@ def fit_b_conv_lstm(train_set, val_set):
                "momentum": 0.9,
                "decay": 0
            },
-           "batch_size": 32,
            "workers": 8,
            "use_multiprocessing": True,
            "n_epochs": 5
@@ -235,7 +233,7 @@ def fit_b_conv_lstm(train_set, val_set):
     csv_line = [n_eval, n_params, validation_loss]
     for key in space.keys:
         csv_line.append(space[key])
-    with open(r'fit_tcn_log', 'a') as f:
+    with open(r'fit_b_conv_lstm_log', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(csv_line)
 
@@ -259,10 +257,9 @@ def fit_tcn(train_set, val_set):
                "momentum": 0.9,
                "decay": 0
            },
-           "batch_size": 32,
            "workers": 8,
            "use_multiprocessing": True,
-           "n_epochs": 1
+           "n_epochs": 5
            }
     nb_filters = []
     kernel_size = {{choice([3, 5, 7, 9, 11, 13, 15, 17, 19])}}
@@ -328,7 +325,7 @@ def fit_tcn(train_set, val_set):
 
 
 if __name__ == '__main__':
-    MAX_EVALS = 1
+    MAX_EVALS = 100
     t0 = time.time()
 
     best_run, best_model = optim.minimize(model=fit_tcn,

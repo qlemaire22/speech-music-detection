@@ -56,8 +56,8 @@ class DataGenerator(keras.utils.Sequence):
 
         if not(self.set_type == "test"):
             n_frame, dim = X.shape
-            seq_length = ceil(n_frame / self.nb_batch)
-            return np.resize(X, (self.nb_batch, seq_length, dim)), np.resize(Y, (self.nb_batch, seq_length, config.CLASSES))
+            seq_length = ceil(n_frame / self.batch_size)
+            return np.resize(X, (self.batch_size, seq_length, dim)), np.resize(Y, (self.batch_size, seq_length, config.CLASSES))
         else:
             return X, Y
 
@@ -150,7 +150,7 @@ class DataGenerator(keras.utils.Sequence):
                 empty += 1
 
         if empty > 0:
-            warnings.warn("Some of the batches are empty.")
+            warnings.warn("Some of the batches are empty: " + str(empty))
             warnings.warn(
                 "Please consider reducing the max_length of the audio files or increasing the target_length.")
 
