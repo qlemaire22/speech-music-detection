@@ -296,6 +296,11 @@ def fit_tcn(train_set, val_set):
     print(n_params)
     print(space)
 
+    with open("hyper_opt_result.txt", 'a') as f:
+        f.write(n_params)
+        for key in space.keys():
+            f.write(key + " " + space[key])
+
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
 
@@ -332,6 +337,7 @@ if __name__ == '__main__':
                                           data=data,
                                           algo=tpe.suggest,
                                           max_evals=MAX_EVALS,
+                                          rseed=None,
                                           trials=Trials())
 
     t1 = time.time()

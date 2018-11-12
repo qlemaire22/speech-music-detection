@@ -33,6 +33,10 @@ class DataGenerator(keras.utils.Sequence):
 
         self.batch_composition = []
 
+        print("Batch size: " + str(self.batch_size))
+        print("Number batches: " + str(self.nb_batch))
+        print("Target seq_length: " + str(self.target_seq_length))
+
         self.on_epoch_end()
 
     def __getitem__(self, index):
