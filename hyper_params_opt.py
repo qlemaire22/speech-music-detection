@@ -16,6 +16,7 @@ from keras import optimizers
 import time
 import datetime
 import csv
+from keras import backend as K
 
 
 def data():
@@ -152,6 +153,8 @@ def fit_b_lstm(train_set, val_set):
         writer.writerow(csv_line)
 
     print('Best validation acc of epoch:', validation_loss)
+    del model
+    K.clear_session()
     return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
 
 
@@ -238,6 +241,8 @@ def fit_b_conv_lstm(train_set, val_set):
         writer.writerow(csv_line)
 
     print('Best validation acc of epoch:', validation_loss)
+    del model
+    K.clear_session()
     return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
 
 
@@ -297,9 +302,9 @@ def fit_tcn(train_set, val_set):
     print(space)
 
     with open("hyper_opt_result.txt", 'a') as f:
-        f.write(n_params)
+        f.write(str(n_params))
         for key in space.keys():
-            f.write(key + " " + space[key])
+            f.write(str(key) + " " + str(space[key]))
 
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
@@ -326,6 +331,8 @@ def fit_tcn(train_set, val_set):
         writer.writerow(csv_line)
 
     print('Best validation acc of epoch:', validation_loss)
+    del model
+    K.clear_session()
     return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
 
 

@@ -28,9 +28,21 @@ class DatasetLoader():
         self.test_set = {"mixed": [],
                          "n_frame": 0}
 
+        dataset_str = ""
+        for dataset in datasets:
+            dataset_str += "_" + dataset
+
+        CACHED_MEAN_STD = False
+
         ns_val, ns_test, ns, ns_mixed, ns_speech, ns_music, ns_noise = [], [], [], [], [], [], []
-        ms = []
-        vs = []
+
+        if os.path.isfile("checkpoint/mean" + dataset_str + ".npy") and os.path.isfile("checkpoint/std" + dataset_str + ".npy"):
+            CACHED_MEAN_STD = True
+            self.train_mean = np.load("checkpoint/mean" + dataset_str + ".npy")
+            self.train_std = np.load("checkpoint/std" + dataset_str + ".npy")
+        else:
+            ms = []
+            vs = []
 
         for dataset in datasets:
             suffix = '_' + str(config.SAMPLING_RATE) + '_' + str(config.AUDIO_MAX_LENGTH) + '_' + str(config.N_MELS)
@@ -70,13 +82,17 @@ class DatasetLoader():
                     ns_speech.append(data["N_FRAME_TRAIN_SPEECH"])
                     ns_music.append(data["N_FRAME_TRAIN_MUSIC"])
                     ns_noise.append(data["N_FRAME_TRAIN_NOISE"])
-                elif "mean.npy" in file:
+                elif "mean.npy" in file and not(CACHED_MEAN_STD):
                     ms.append(np.load(file))
-                elif "var.npy" in file:
+                elif "var.npy" in file and not(CACHED_MEAN_STD):
                     vs.append(np.load(file))
 
-        self.train_mean = self.combine_means(ms, ns)
-        self.train_std = np.sqrt(self.combine_var(vs, ns, ms, self.train_mean))
+        if not(CACHED_MEAN_STD):
+            self.train_mean = self.combine_means(ms, ns)
+            self.train_std = np.sqrt(self.combine_var(vs, ns, ms, self.train_mean))
+            np.save("checkpoint/mean" + dataset_str + ".npy", self.train_mean)
+            np.save("checkpoint/std" + dataset_str + ".npy", self.train_std)
+
         self.train_set["n_frame"] = np.sum(ns)
         self.val_set["n_frame"] = np.sum(ns_val)
         self.test_set["n_frame"] = np.sum(ns_test)
