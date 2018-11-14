@@ -55,10 +55,6 @@ def train(train_set, val_set, cfg, config_name, resume, model_path):
         print("Loading the network..")
         model = load_model(cfg["model"])
 
-    if not(os.path.isdir("checkpoint")):
-        os.makedirs("checkpoint")
-        print("Checkpoint folder created.")
-
     csv_logger = CSVLogger('checkpoint/' + config_name +
                            '-training.log', append=resume)
 
@@ -109,6 +105,10 @@ if __name__ == "__main__":
 
     experiments = utils.load_json('experiments.json')
     cfg = experiments[args.config]
+
+    if not(os.path.isdir("checkpoint")):
+        os.makedirs("checkpoint")
+        print("Checkpoint folder created.")
 
     print("Creating the dataset..")
 

@@ -1,5 +1,5 @@
 import numpy as np
-
+import os
 from hyperopt import Trials, STATUS_OK, tpe
 from hyperas import optim
 from hyperas.distributions import choice, uniform, conditional
@@ -155,7 +155,7 @@ def fit_b_lstm(train_set, val_set):
     print('Best validation acc of epoch:', validation_loss)
     del model
     K.clear_session()
-    return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
+    return {'loss': validation_loss, 'status': STATUS_OK}
 
 
 def fit_b_conv_lstm(train_set, val_set):
@@ -243,7 +243,7 @@ def fit_b_conv_lstm(train_set, val_set):
     print('Best validation acc of epoch:', validation_loss)
     del model
     K.clear_session()
-    return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
+    return {'loss': validation_loss, 'status': STATUS_OK}
 
 
 def fit_tcn(train_set, val_set):
@@ -333,19 +333,24 @@ def fit_tcn(train_set, val_set):
     print('Best validation acc of epoch:', validation_loss)
     del model
     K.clear_session()
-    return {'loss': validation_loss, 'status': STATUS_OK, 'model': model}
+    return {'loss': validation_loss, 'status': STATUS_OK}
 
 
 if __name__ == '__main__':
     MAX_EVALS = 100
+
+    if not(os.path.isdir("checkpoint")):
+        os.makedirs("checkpoint")
+        print("Checkpoint folder created.")
+
     t0 = time.time()
 
-    best_run, best_model = optim.minimize(model=fit_tcn,
-                                          data=data,
-                                          algo=tpe.suggest,
-                                          max_evals=MAX_EVALS,
-                                          rseed=None,
-                                          trials=Trials())
+    best_run = optim.minimize(model=fit_tcn,
+                              data=data,
+                              algo=tpe.suggest,
+                              max_evals=MAX_EVALS,
+                              rseed=None,
+                              trials=Trials())
 
     t1 = time.time()
     print("Number of evaluations: " + str(MAX_EVALS))
@@ -359,5 +364,5 @@ if __name__ == '__main__':
         f.write("Total time: " + str(t1 - t0) + "\n")
         f.write("Time by eval: " + str((t1 - t0) / MAX_EVALS) + "\n")
         f.write("Best found values:" + "\n")
-        for key in best_run.keys():
+        for key in best_run[0].keys():
             f.write(str(key) + " " + str(best_run[key]) + "\n")
