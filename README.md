@@ -1,17 +1,16 @@
-# Speech & Music Detection
+# Speech and Music Detection
 
-Python framework for speech and music detection using Keras.
+Python framework for Speech and Music Detection using Keras.
 
 ## Description
 
-This framework is designed to easily evaluate new models and configurations for the speech and music detection task using deep learning. More details about this task can be found in the description page for the [MIREX 2018 Speech/Music Detection task](https://www.music-ir.org/mirex/wiki/2018:Music_and/or_Speech_Detection). The evaluation implemented in this framework is the same as the one described in this page for comparison purposes.
+This framework is designed to easily evaluate new models and configurations for the speech and music detection task using neural networks. More details about this task can be found in the description page for the [MIREX 2018 Speech/Music Detection task](https://www.music-ir.org/mirex/wiki/2018:Music_and/or_Speech_Detection). The evaluation implemented in this framework is the same as the one described in this page for comparison purposes.
 
-Different architectures are already implemented like Temporal Convolutional Network (TCN), Bidirectional ConvLSTM (B-ConvLSTM) and Bidirectional LSTM (B-LTSM).
-Moreover, new sequential architectures and custom datasets can easily be added to the framework.
+Different data pre-processing, data augmentation and architectures are already implemented and it is possible to easily add new methods and to train on different datasets.
 
 ## Installation
 
-The SoX command line utility is required for the dataset preprocessing. ([HomePage](http://sox.sourceforge.net)).
+The SoX command line utility is required for the dataset pre-processing. ([HomePage](http://sox.sourceforge.net)).
 
 Installation with HomeBrew:
 
@@ -38,7 +37,7 @@ The different parameters of the framework that are not supposed to be changed wh
 
 Those parameters are:
 
-- The preprocessing parameters as the sampling rate.
+- The preprocessing parameters like the sampling rate.
 - The data augmentation parameters.
 - The loss and metric used for the training.
 
@@ -46,7 +45,7 @@ Those parameters are:
 
 ### Labels
 
-The label file of an audio can either be a text file containing one label for the whole file (speech, music or noise) or be a text file containing the list of the events happening in the audio. In the last case the audio will be considered "mixed" and the label file has to be formatted in this ways:
+The label file of an audio can either be a text file containing one label for the whole file (speech, music or noise) or be a text file containing the list of the events happening in the audio. In the last case the audio will be considered "mixed" and the label file has to be formatted in this way:
 
     t_start1 t_stop1 music/speech
     t_start2 t_stop2 music/speech
@@ -61,17 +60,17 @@ The dataset has to be separated into two folders:
 - The folder containing all the audio files and their corresponding label text files.
 - The folder containing the repartition of the data between each set (train, validation or test) for each type of label (speech, music, noise or mixed). The files contain the name of the corresponding audio with no extension and the possible files are `mixed_train, mixed_val, mixed_test, music_train, music_val, speech_train, speech_val` or `noise_train`.
 
-Then, add the name of the two folders in `datasets.json` and run the file `prepare_dataset/prepare_audio.py` to do the pre-processing pre-training of the audio.
+Then, add the name of the two folders in `datasets.json` and run the file `prepare_dataset/prepare_audio.py` to do the processing pre-training of the audio.
 
 ### Pre-processing
 
-Prior to the learning phase, each audio file is resampled to a 22.05kHz mono audio of maximum 1mn30 (the files are split). Then a Short-Time Fourier Transform (STFT) with a Hann window, a frame length of 1024 and Hop size of 512 is applied and only the magnitude of the power spectrogram is kept. Those matrices are then stored for the learning phase.
+Prior to the learning phase, each audio file is resampled to a 22.05kHz mono audio of maximum 1mn30 (the files are split). Then a Short-Time Fourier Transform (STFT) with a Hann window, a frame length of 1024 and Hop size of 512 is applied and only the magnitude of the power spectrogram is kept. Those matrices are then stored for the learning phase. Those steps are done in the file `prepare_dataset/prepare_audio.py`.
 
-During the learning phase, the spectrograms are loaded, then deformed by the data augmentation and a mel filterbank with 100 coefficients between 27.5 and 8000 Hz is applied. Those coefficients are then put on a log scale, normalized over the training set and inputted into the network.
+During the learning phase, the spectrograms are loaded, then deformed by the data augmentation and a Mel Filterbank with 80 coefficients between 27.5 and 8000 Hz is applied. Those coefficients are then put on a log scale, normalized over the training set and inputted into the network. Those steps are implemented in `train.py` and could be changed to test new configurations.
 
 ### Data Augmentation
 
-Different transformations are applied to each training sample to do some data augmentation. For speed purposes, the data augmentation is not applied to the audio signal but on the magnitude of the power spectrogram. The implemented transformations are:
+Different transformations are applied to each training sample to do some data augmentation. To reduce the computation during the training, the data augmentation is not applied to the audio signal but on the magnitude of the power spectrogram. The implemented transformations are:
 
 - Time stretching
 - Pitch shifting
@@ -79,7 +78,7 @@ Different transformations are applied to each training sample to do some data au
 - Block mixing
 - Gaussian frequency filter
 
-Those deformations are based on the work of J. Schlüter and T. Grill [1].
+Those deformations and the hyper-parameters used are based on the work of J. Schlüter and T. Grill [1].
 
 ## Experiment configuration
 
@@ -158,7 +157,19 @@ Here are the already implemented optimizers with their configuration.
       "decay": 1e-6
     }
 
-## Training
+## Scripts
+
+- `train.py` to start the training of an experiment, different things can be decided in this file like the data pre-processing and augmentation, the learning rate scheduler and the early stopping.
+- `evaluate.py` to start the evaluation on the test set of a previously trained model. The pre-processing on the test set is decided in this file.
+- `predict.py` to pass one file or folder through the network and save the output.
+- `hyper_params_opt.py` to do the hyper-parameters optimization of a configuration with `hyperas`. Almost all the configuration for the hyper-parameters optimization has to be manually set in this file.
+- `vizualize_data.py` to listen to the audio while visualizing the prediction and/or ground-truth with `sed_vis`.
+
+## Real-time analysis of the audio
+
+To analyze in real-time the audio taken from the microphone of the computer, one can try this [Github Project](https://github.com/qlemaire22/real-time-audio-analysis) that has been made to work with this framework.
+
+You only need to put your trained model and the mean and std matrices of the dataset in the `model` folder of that project.
 
 ## References
 

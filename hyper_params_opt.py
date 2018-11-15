@@ -128,6 +128,12 @@ def fit_b_lstm(train_set, val_set):
     print(n_params)
     print(space)
 
+    with open("hyper_opt_result.txt", 'a') as f:
+        f.write(str(n_params))
+        for key in space.keys():
+            f.write(str(key) + " " + str(space[key]) + " ")
+            f.write('\n')
+
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
 
@@ -215,6 +221,12 @@ def fit_b_conv_lstm(train_set, val_set):
     n_params = model.count_params()
     print(n_params)
     print(space)
+
+    with open("hyper_opt_result.txt", 'a') as f:
+        f.write(str(n_params))
+        for key in space.keys():
+            f.write(str(key) + " " + str(space[key]) + " ")
+            f.write('\n')
 
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
@@ -304,7 +316,8 @@ def fit_tcn(train_set, val_set):
     with open("hyper_opt_result.txt", 'a') as f:
         f.write(str(n_params))
         for key in space.keys():
-            f.write(str(key) + " " + str(space[key]))
+            f.write(str(key) + " " + str(space[key]) + " ")
+            f.write('\n')
 
     optimizer = optimizers.SGD(
         lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
