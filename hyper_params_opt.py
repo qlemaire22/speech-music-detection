@@ -255,7 +255,7 @@ def fit_b_conv_lstm(train_set, val_set):
     validation_loss = np.amin(result.history['val_loss'])
 
     csv_line = [n_eval, n_params, validation_loss]
-    for key in space.keys:
+    for key in space.keys():
         csv_line.append(space[key])
     with open(r'fit_b_conv_lstm_log', 'a') as f:
         writer = csv.writer(f)
