@@ -191,14 +191,19 @@ def fit_b_conv_lstm(train_set, val_set):
     dilation_rate_list = []
 
     filters_list.append({{choice([8, 16, 32])}})
-    filters_list.append({{choice([8, 16, 32])}})
-    kernel_size_list.append({{choice([1, 3, 5])}})
     kernel_size_list.append({{choice([1, 3, 5])}})
     stride_list.append(1)
-    stride_list.append(1)
     dilation_rate_list.append(1)
-    dilation_rate_list.append(1)
-    if conditional(n_layer) == 3:
+    if conditional(n_layer) == 2:
+        filters_list.append({{choice([8, 16, 32])}})
+        kernel_size_list.append({{choice([1, 3, 5])}})
+        stride_list.append(1)
+        dilation_rate_list.append(1)
+    elif conditional(n_layer) == 3:
+        filters_list.append({{choice([8, 16, 32])}})
+        kernel_size_list.append({{choice([1, 3, 5])}})
+        stride_list.append(1)
+        dilation_rate_list.append(1)
         filters_list.append({{choice([8, 16, 32])}})
         kernel_size_list.append({{choice([1, 3, 5])}})
         stride_list.append(1)
@@ -211,6 +216,10 @@ def fit_b_conv_lstm(train_set, val_set):
         stride_list.append(1)
         stride_list.append(1)
         dilation_rate_list.append(1)
+        dilation_rate_list.append(1)
+        filters_list.append({{choice([8, 16, 32])}})
+        kernel_size_list.append({{choice([1, 3, 5])}})
+        stride_list.append(1)
         dilation_rate_list.append(1)
 
     model = b_conv_lstm.create_b_conv_lstm(filters_list=filters_list,
