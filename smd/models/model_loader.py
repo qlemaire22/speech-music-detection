@@ -1,6 +1,7 @@
 from smd import config
 from smd.models.b_lstm import create_b_lstm
 from smd.models.tcn import create_tcn
+from smd.models.b_tcn import create_b_tcn
 from smd.models.b_conv_lstm import create_b_conv_lstm
 from keras import optimizers
 
@@ -25,6 +26,15 @@ def load_model(cfg):
                            n_layers=cfg["n_layers"],
                            use_skip_connections=cfg["use_skip_connections"],
                            dropout_rate=cfg["dropout_rate"])
+    elif cfg["type"] == "btcn":
+        model = create_b_tcn(list_n_filters=cfg["list_n_filters"],
+                             kernel_size=cfg["kernel_size"],
+                             dilations=cfg["dilations"],
+                             nb_stacks=cfg["nb_stacks"],
+                             activation=cfg["activation"],
+                             n_layers=cfg["n_layers"],
+                             use_skip_connections=cfg["use_skip_connections"],
+                             dropout_rate=cfg["dropout_rate"])
     else:
         raise ValueError(
             "Configuration error: the specified model is not yet implemented.")

@@ -4,7 +4,7 @@ from hyperopt import Trials, STATUS_OK, tpe
 from hyperas import optim
 from hyperas.distributions import choice, uniform, conditional
 
-from smd.models import tcn, b_lstm, b_conv_lstm
+from smd.models import tcn, b_lstm, b_conv_lstm, b_tcn
 import smd.config as config
 import smd.utils as utils
 from smd.data.data_generator import DataGenerator
@@ -257,7 +257,7 @@ def fit_b_conv_lstm(train_set, val_set):
     csv_line = [n_eval, n_params, validation_loss]
     for key in space.keys():
         csv_line.append(space[key])
-    with open(r'fit_b_conv_lstm_log', 'a') as f:
+    with open(r'fit_b_conv_lstm.csv', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(csv_line)
 
@@ -349,6 +349,97 @@ def fit_tcn(train_set, val_set):
     for key in space.keys():
         csv_line.append(space[key])
     with open(r'fit_tcn_log.csv', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(csv_line)
+
+    print('Best validation acc of epoch:', validation_loss)
+    del model
+    K.clear_session()
+    return {'loss': validation_loss, 'status': STATUS_OK}
+
+
+def fit_b_tcn(train_set, val_set):
+    global n_eval
+
+    n_eval += 1
+    print(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval))
+
+    with open("hyper_opt_result.txt", 'a') as f:
+        f.write(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval) + "\n")
+
+    cfg = {"optimizer":
+           {
+               "name": "SGD",
+               "lr": 0.001,
+               "momentum": 0.9,
+               "decay": 0
+           },
+           "workers": 8,
+           "use_multiprocessing": True,
+           "n_epochs": 5
+           }
+    nb_filters = []
+    kernel_size = {{choice([3, 5, 7, 9, 11, 13, 15, 17, 19])}}
+    dilations = {{choice([[2 ** i for i in range(4)],
+                          [2 ** i for i in range(5)],
+                          [2 ** i for i in range(6)],
+                          [2 ** i for i in range(7)],
+                          [2 ** i for i in range(8)],
+                          [2 ** i for i in range(9)]])}}
+    nb_stacks = {{choice([3, 4, 5, 6, 7, 8, 9, 10])}}
+    use_skip_connections = {{choice([True, False])}}
+    n_layers = {{choice([1, 2, 3, 4])}}
+
+    nb_filters.append({{choice([8, 16, 32])}})
+    if conditional(n_layers) == 2:
+        nb_filters.append({{choice([8, 16, 32])}})
+    if conditional(n_layers) == 3:
+        nb_filters.append({{choice([8, 16, 32])}})
+        nb_filters.append({{choice([8, 16, 32])}})
+    if conditional(n_layers) == 4:
+        nb_filters.append({{choice([8, 16, 32])}})
+        nb_filters.append({{choice([8, 16, 32])}})
+        nb_filters.append({{choice([8, 16, 32])}})
+
+    model = b_tcn.create_b_tcn(list_n_filters=nb_filters,
+                               kernel_size=kernel_size,
+                               dilations=dilations,
+                               nb_stacks=nb_stacks,
+                               n_layers=n_layers,
+                               use_skip_connections=use_skip_connections,
+                               dropout_rate={{uniform(0.05, 0.5)}})
+
+    n_params = model.count_params()
+    print(n_params)
+    print(space)
+
+    with open("hyper_opt_result.txt", 'a') as f:
+        f.write(str(n_params))
+        for key in space.keys():
+            f.write(str(key) + " " + str(space[key]) + " ")
+            f.write('\n')
+
+    optimizer = optimizers.SGD(
+        lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
+
+    model.compile(loss=config.LOSS, metrics=config.METRICS,
+                  optimizer=optimizer)
+
+    result = model.fit_generator(train_set,
+                                 epochs=cfg["n_epochs"],
+                                 validation_data=val_set,
+                                 workers=cfg["workers"],
+                                 use_multiprocessing=cfg["use_multiprocessing"],
+                                 shuffle=True,
+                                 verbose=0
+                                 )
+
+    validation_loss = np.amin(result.history['val_loss'])
+
+    csv_line = [n_eval, n_params, validation_loss]
+    for key in space.keys():
+        csv_line.append(space[key])
+    with open(r'fit_b_tcn_log.csv', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(csv_line)
 
