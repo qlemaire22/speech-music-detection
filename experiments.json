@@ -1,9 +1,9 @@
 {
-  "test1": {
+  "exp1_blstm": {
     "model": {
       "type": "blstm",
-      "hidden_units": [100],
-      "dropout": 0.2,
+      "hidden_units": [175, 25, 100, 50],
+      "dropout": 0.054614,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -12,22 +12,22 @@
       }
     },
     "dataset": [
-      "ofai"
+      "ofai", "muspeak"
     ],
     "batch_size": 32,
-    "nb_epoch": 10,
-    "target_seq_length": 300,
+    "nb_epoch": 50,
+    "target_seq_length": 270,
     "workers": 8,
     "use_multiprocessing": true
   },
-  "test2": {
+  "exp2_bconvlstm": {
     "model": {
       "type": "bconvlstm",
-      "filters_list": [5, 5],
+      "filters_list": [16, 8],
       "kernel_size_list": [3, 3],
       "stride_list": [1, 1],
       "dilation_rate_list": [1, 1],
-      "dropout": 0.2,
+      "dropout": 0.351789,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -36,13 +36,67 @@
       }
     },
     "dataset": [
-      "ofai"
+      "ofai", "muspeak"
     ],
     "batch_size": 32,
-    "nb_epoch": 10,
-    "target_seq_length": 300,
-    "workers": 1,
-    "use_multiprocessing": false
+    "nb_epoch": 50,
+    "target_seq_length": 270,
+    "workers": 8,
+    "use_multiprocessing": true
+  },
+  "exp3_tcn": {
+    "model": {
+      "type": "tcn",
+      "list_n_filters": [32, 16],
+      "kernel_size": 13,
+      "dilations": [1, 2, 4, 8, 16],
+      "nb_stacks": 6,
+      "activation": "norm_relu",
+      "n_layers": 2,
+      "use_skip_connections": false,
+      "dropout_rate": 0.0764055,
+      "optimizer": {
+        "name": "SGD",
+        "lr": 0.001,
+        "momentum": 0.9,
+        "decay": 0
+      }
+    },
+    "dataset": [
+      "ofai", "muspeak"
+    ],
+    "batch_size": 32,
+    "nb_epoch": 50,
+    "target_seq_length": 270,
+    "workers": 8,
+    "use_multiprocessing": true
+  },
+  "exp3_b_tcn": {
+    "model": {
+      "type": "btcn",
+      "list_n_filters": [32, 16],
+      "kernel_size": 13,
+      "dilations": [1, 2, 4, 8, 16],
+      "nb_stacks": 6,
+      "activation": "norm_relu",
+      "n_layers": 2,
+      "use_skip_connections": false,
+      "dropout_rate": 0.0764055,
+      "optimizer": {
+        "name": "SGD",
+        "lr": 0.001,
+        "momentum": 0.9,
+        "decay": 0
+      }
+    },
+    "dataset": [
+      "ofai", "muspeak"
+    ],
+    "batch_size": 32,
+    "nb_epoch": 50,
+    "target_seq_length": 270,
+    "workers": 8,
+    "use_multiprocessing": true
   },
   "test3": {
     "model": {
@@ -64,65 +118,6 @@
     },
     "dataset": [
       "ofai"
-    ],
-    "batch_size": 32,
-    "nb_epoch": 10,
-    "target_seq_length": 270,
-    "workers": 8,
-    "use_multiprocessing": true
-  },
-  "test4": {
-    "model": {
-      "type": "tcn",
-      "list_n_filters": [32],
-      "kernel_size": 4,
-      "dilations": [1, 2, 4, 8, 16, 32],
-      "nb_stacks": 3,
-      "activation": "norm_relu",
-      "n_layers": 1,
-      "use_skip_connections": true,
-      "dropout_rate": 0.05,
-      "optimizer": {
-        "name": "SGD",
-        "lr": 0.001,
-        "momentum": 0.9,
-        "decay": 0
-      }
-    },
-    "dataset": [
-      "ofai",
-      "gtzan",
-      "musan",
-      "muspeak",
-      "scheirer_slaney",
-      "esc-50"
-    ],
-    "batch_size": 32,
-    "nb_epoch": 30,
-    "target_seq_length": 300,
-    "workers": 8,
-    "use_multiprocessing": true
-  },
-  "test5": {
-    "model": {
-      "type": "tcn",
-      "list_n_filters": [32],
-      "kernel_size": 4,
-      "dilations": [1, 2, 4, 8, 16],
-      "nb_stacks": 3,
-      "activation": "norm_relu",
-      "n_layers": 1,
-      "use_skip_connections": true,
-      "dropout_rate": 0.05,
-      "optimizer": {
-        "name": "SGD",
-        "lr": 0.001,
-        "momentum": 0.9,
-        "decay": 0
-      }
-    },
-    "dataset": [
-      "muspeak", "gtzan", "scheirer_slaney"
     ],
     "batch_size": 32,
     "nb_epoch": 10,

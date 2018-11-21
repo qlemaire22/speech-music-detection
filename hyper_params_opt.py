@@ -154,7 +154,7 @@ def fit_b_lstm(train_set, val_set):
     csv_line = [n_eval, n_params, validation_loss]
     for key in space.keys():
         csv_line.append(space[key])
-    with open(r'fit_b_lstm.csv', 'a') as f:
+    with open(r'fit_b_lstm_log.csv', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(csv_line)
 
@@ -257,7 +257,7 @@ def fit_b_conv_lstm(train_set, val_set):
     csv_line = [n_eval, n_params, validation_loss]
     for key in space.keys():
         csv_line.append(space[key])
-    with open(r'fit_b_conv_lstm.csv', 'a') as f:
+    with open(r'fit_b_conv_lstm_log.csv', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(csv_line)
 
