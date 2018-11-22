@@ -71,17 +71,17 @@
     "workers": 8,
     "use_multiprocessing": true
   },
-  "exp3_b_tcn": {
+  "exp4_btcn": {
     "model": {
       "type": "btcn",
-      "list_n_filters": [32, 16],
-      "kernel_size": 13,
-      "dilations": [1, 2, 4, 8, 16],
-      "nb_stacks": 6,
+      "list_n_filters": [16, 32],
+      "kernel_size": 17,
+      "dilations": [1, 2, 4, 8],
+      "nb_stacks": 7,
       "activation": "norm_relu",
       "n_layers": 2,
       "use_skip_connections": false,
-      "dropout_rate": 0.0764055,
+      "dropout_rate": 0.075669,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
