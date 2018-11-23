@@ -21,7 +21,7 @@ from keras import backend as K
 
 def data():
     n_eval = 0
-    cfg = {"dataset": ["ofai", "muspeak"],
+    cfg = {"dataset": ["ofai", "muspeak", "esc-50"],
            "data_location": "/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
            "target_seq_length": 270,
            "batch_size": 32
@@ -108,18 +108,12 @@ def fit_b_lstm(train_set, val_set):
     if conditional(n_layer) == 2:
         layers.append(
             {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-    elif conditional(n_layer) == 3:
-        layers.append(
-            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-        layers.append(
-            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-    elif conditional(n_layer) == 4:
-        layers.append(
-            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-        layers.append(
-            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-        layers.append(
-            {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+        if conditional(n_layer) == 3:
+            layers.append(
+                {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
+            if conditional(n_layer) == 4:
+                layers.append(
+                    {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
 
     model = b_lstm.create_b_lstm(
         hidden_units=layers, dropout={{uniform(0.05, 0.5)}})
@@ -199,28 +193,16 @@ def fit_b_conv_lstm(train_set, val_set):
         kernel_size_list.append({{choice([1, 3, 5])}})
         stride_list.append(1)
         dilation_rate_list.append(1)
-    elif conditional(n_layer) == 3:
-        filters_list.append({{choice([8, 16, 32])}})
-        kernel_size_list.append({{choice([1, 3, 5])}})
-        stride_list.append(1)
-        dilation_rate_list.append(1)
-        filters_list.append({{choice([8, 16, 32])}})
-        kernel_size_list.append({{choice([1, 3, 5])}})
-        stride_list.append(1)
-        dilation_rate_list.append(1)
-    elif conditional(n_layer) == 4:
-        filters_list.append({{choice([8, 16, 32])}})
-        filters_list.append({{choice([8, 16, 32])}})
-        kernel_size_list.append({{choice([1, 3, 5])}})
-        kernel_size_list.append({{choice([1, 3, 5])}})
-        stride_list.append(1)
-        stride_list.append(1)
-        dilation_rate_list.append(1)
-        dilation_rate_list.append(1)
-        filters_list.append({{choice([8, 16, 32])}})
-        kernel_size_list.append({{choice([1, 3, 5])}})
-        stride_list.append(1)
-        dilation_rate_list.append(1)
+        if conditional(n_layer) == 3:
+            filters_list.append({{choice([8, 16, 32])}})
+            kernel_size_list.append({{choice([1, 3, 5])}})
+            stride_list.append(1)
+            dilation_rate_list.append(1)
+            if conditional(n_layer) == 4:
+                filters_list.append({{choice([8, 16, 32])}})
+                kernel_size_list.append({{choice([1, 3, 5])}})
+                stride_list.append(1)
+                dilation_rate_list.append(1)
 
     model = b_conv_lstm.create_b_conv_lstm(filters_list=filters_list,
                                            kernel_size_list=kernel_size_list,
@@ -302,13 +284,10 @@ def fit_tcn(train_set, val_set):
     nb_filters.append({{choice([8, 16, 32])}})
     if conditional(n_layers) == 2:
         nb_filters.append({{choice([8, 16, 32])}})
-    if conditional(n_layers) == 3:
-        nb_filters.append({{choice([8, 16, 32])}})
-        nb_filters.append({{choice([8, 16, 32])}})
-    if conditional(n_layers) == 4:
-        nb_filters.append({{choice([8, 16, 32])}})
-        nb_filters.append({{choice([8, 16, 32])}})
-        nb_filters.append({{choice([8, 16, 32])}})
+        if conditional(n_layers) == 3:
+            nb_filters.append({{choice([8, 16, 32])}})
+            if conditional(n_layers) == 4:
+                nb_filters.append({{choice([8, 16, 32])}})
 
     model = tcn.create_tcn(list_n_filters=nb_filters,
                            kernel_size=kernel_size,
@@ -376,30 +355,30 @@ def fit_b_tcn(train_set, val_set):
            },
            "workers": 8,
            "use_multiprocessing": True,
-           "n_epochs": 5
+           "n_epochs": 10
            }
     nb_filters = []
-    kernel_size = {{choice([3, 5, 7, 9, 11, 13, 15, 17, 19])}}
+    kernel_size = {{choice([3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31])}}
     dilations = {{choice([[2 ** i for i in range(4)],
                           [2 ** i for i in range(5)],
                           [2 ** i for i in range(6)],
                           [2 ** i for i in range(7)],
                           [2 ** i for i in range(8)],
-                          [2 ** i for i in range(9)]])}}
-    nb_stacks = {{choice([3, 4, 5, 6, 7, 8, 9, 10])}}
+                          [2 ** i for i in range(9)],
+                          [2 ** i for i in range(10)]])}}
+    nb_stacks = {{choice([3, 4, 5, 6, 7, 8, 9, 10, 11, 12])}}
     use_skip_connections = {{choice([True, False])}}
-    n_layers = {{choice([1, 2, 3, 4])}}
+    n_layers = {{choice([1, 2, 3, 4, 5])}}
 
-    nb_filters.append({{choice([8, 16, 32])}})
+    nb_filters.append({{choice([8, 16, 32, 64])}})
     if conditional(n_layers) == 2:
-        nb_filters.append({{choice([8, 16, 32])}})
-    if conditional(n_layers) == 3:
-        nb_filters.append({{choice([8, 16, 32])}})
-        nb_filters.append({{choice([8, 16, 32])}})
-    if conditional(n_layers) == 4:
-        nb_filters.append({{choice([8, 16, 32])}})
-        nb_filters.append({{choice([8, 16, 32])}})
-        nb_filters.append({{choice([8, 16, 32])}})
+        nb_filters.append({{choice([8, 16, 32, 64])}})
+        if conditional(n_layers) == 3:
+            nb_filters.append({{choice([8, 16, 32, 64])}})
+            if conditional(n_layers) == 4:
+                nb_filters.append({{choice([8, 16, 32, 64])}})
+                if conditional(n_layers) == 5:
+                    nb_filters.append({{choice([8, 16, 32, 64])}})
 
     model = b_tcn.create_b_tcn(list_n_filters=nb_filters,
                                kernel_size=kernel_size,
@@ -407,7 +386,7 @@ def fit_b_tcn(train_set, val_set):
                                nb_stacks=nb_stacks,
                                n_layers=n_layers,
                                use_skip_connections=use_skip_connections,
-                               dropout_rate={{uniform(0.05, 0.5)}})
+                               dropout_rate={{uniform(0.01, 0.2)}})
 
     n_params = model.count_params()
     print(n_params)
@@ -450,7 +429,7 @@ def fit_b_tcn(train_set, val_set):
 
 
 if __name__ == '__main__':
-    MAX_EVALS = 100
+    MAX_EVALS = 500
 
     if not(os.path.isdir("checkpoint")):
         os.makedirs("checkpoint")
@@ -458,7 +437,7 @@ if __name__ == '__main__':
 
     t0 = time.time()
 
-    best_run = optim.minimize(model=fit_tcn,
+    best_run = optim.minimize(model=fit_b_tcn,
                               data=data,
                               algo=tpe.suggest,
                               max_evals=MAX_EVALS,

@@ -20,11 +20,11 @@ def test_data_processing(file, mean, std):
     return mels.T
 
 
-def predict(data_path, model_path, mean_path, std_path):
+def predict(data_path, model_path, mean_path, std_path, smoothing):
     mean = np.load(mean_path)
     std = np.load(std_path)
 
-    print("Loading the model to resume " + model_path + "..")
+    print("Loading the model " + model_path + "..")
     model = keras.models.load_model(model_path)
     print("Start the prediction..")
 
@@ -37,7 +37,10 @@ def predict(data_path, model_path, mean_path, std_path):
         x = test_data_processing(file, mean, std)
         x = x.reshape((1, x.shape[0], x.shape[1]))
         output = model.predict(x, batch_size=1, verbose=0)[0].T
-        annotation = preprocessing.label_to_annotation(postprocessing.apply_threshold(output))
+        output = postprocessing.apply_threshold(output)
+        if smoothing:
+            output = postprocessing.smooth_output(output)
+        annotation = preprocessing.label_to_annotation(output)
         output_path = file.replace(".npy", '') + "_prediction.txt"
         utils.save_annotation(annotation, output_path)
 
@@ -49,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_path', type=str, default="audio_test/",
                         help='path to a file or a folder for prediction')
 
-    parser.add_argument('--resume_model', type=str, default="trained/model.hdf5",
+    parser.add_argument('--model', type=str, default="trained/model.hdf5",
                         help='path of the model to load when the starting is resumed')
 
     parser.add_argument('--mean_path', type=str, default="trained/mean.npy",
@@ -58,6 +61,9 @@ if __name__ == "__main__":
     parser.add_argument('--std_path', type=str, default="trained/std.npy",
                         help='path of the std of the normalization applied with the model')
 
+    parser.add_argument('--smoothing', type=bool, default=True,
+                        help='true or false, apply to smoothing function to the ouput')
+
     args = parser.parse_args()
 
-    predict(args.data_path, args.resume_model, args.mean_path, args.std_path)
+    predict(args.data_path, args.model, args.mean_path, args.std_path, args.smoothing)
