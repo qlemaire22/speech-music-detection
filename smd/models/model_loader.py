@@ -43,8 +43,7 @@ def load_model(cfg):
         optimizer = optimizers.SGD(
             lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
     elif cfg["optimizer"]["name"] == "adam":
-        optimizer = optimizers.adam(
-            lr=cfg["optimizer"]["lr"], clipnorm=cfg["optimizer"]["clipnorm"])
+        optimizer = optimizers.adam(lr=cfg["optimizer"]["lr"], clipnorm=cfg["optimizer"]["clipnorm"])
     else:
         raise ValueError(
             "Configuration error: the specified optimizer is not yet implemented.")

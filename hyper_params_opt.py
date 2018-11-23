@@ -397,8 +397,7 @@ def fit_b_tcn(train_set, val_set):
             f.write(str(key) + " " + str(space[key]) + " ")
             f.write('\n')
 
-    optimizer = optimizers.SGD(
-        lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
+    optimizer = optimizers.adam(lr=cfg["optimizer"]["lr"], clipnorm=cfg["optimizer"]["clipnorm"])
 
     model.compile(loss=config.LOSS, metrics=config.METRICS,
                   optimizer=optimizer)
