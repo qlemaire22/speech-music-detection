@@ -105,13 +105,13 @@ def fit_b_lstm(train_set, val_set):
 
     layers.append(
         {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-    if conditional(n_layer) == 2:
+    if conditional(n_layer) >= 2:
         layers.append(
             {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-        if conditional(n_layer) == 3:
+        if conditional(n_layer) >= 3:
             layers.append(
                 {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
-            if conditional(n_layer) == 4:
+            if conditional(n_layer) >= 4:
                 layers.append(
                     {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
 
@@ -188,17 +188,17 @@ def fit_b_conv_lstm(train_set, val_set):
     kernel_size_list.append({{choice([1, 3, 5])}})
     stride_list.append(1)
     dilation_rate_list.append(1)
-    if conditional(n_layer) == 2:
+    if conditional(n_layer) >= 2:
         filters_list.append({{choice([8, 16, 32])}})
         kernel_size_list.append({{choice([1, 3, 5])}})
         stride_list.append(1)
         dilation_rate_list.append(1)
-        if conditional(n_layer) == 3:
+        if conditional(n_layer) >= 3:
             filters_list.append({{choice([8, 16, 32])}})
             kernel_size_list.append({{choice([1, 3, 5])}})
             stride_list.append(1)
             dilation_rate_list.append(1)
-            if conditional(n_layer) == 4:
+            if conditional(n_layer) >= 4:
                 filters_list.append({{choice([8, 16, 32])}})
                 kernel_size_list.append({{choice([1, 3, 5])}})
                 stride_list.append(1)
@@ -282,11 +282,11 @@ def fit_tcn(train_set, val_set):
     n_layers = {{choice([1, 2, 3, 4])}}
 
     nb_filters.append({{choice([8, 16, 32])}})
-    if conditional(n_layers) == 2:
+    if conditional(n_layers) >= 2:
         nb_filters.append({{choice([8, 16, 32])}})
-        if conditional(n_layers) == 3:
+        if conditional(n_layers) >= 3:
             nb_filters.append({{choice([8, 16, 32])}})
-            if conditional(n_layers) == 4:
+            if conditional(n_layers) >= 4:
                 nb_filters.append({{choice([8, 16, 32])}})
 
     model = tcn.create_tcn(list_n_filters=nb_filters,
@@ -371,13 +371,13 @@ def fit_b_tcn(train_set, val_set):
     n_layers = {{choice([1, 2, 3, 4, 5])}}
 
     nb_filters.append({{choice([8, 16, 32, 64])}})
-    if conditional(n_layers) == 2:
+    if conditional(n_layers) >= 2:
         nb_filters.append({{choice([8, 16, 32, 64])}})
-        if conditional(n_layers) == 3:
+        if conditional(n_layers) >= 3:
             nb_filters.append({{choice([8, 16, 32, 64])}})
-            if conditional(n_layers) == 4:
+            if conditional(n_layers) >= 4:
                 nb_filters.append({{choice([8, 16, 32, 64])}})
-                if conditional(n_layers) == 5:
+                if conditional(n_layers) >= 5:
                     nb_filters.append({{choice([8, 16, 32, 64])}})
 
     model = b_tcn.create_b_tcn(list_n_filters=nb_filters,
