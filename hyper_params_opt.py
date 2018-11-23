@@ -348,17 +348,16 @@ def fit_b_tcn(train_set, val_set):
 
     cfg = {"optimizer":
            {
-               "name": "SGD",
-               "lr": 0.001,
-               "momentum": 0.9,
-               "decay": 0
+               "name": "adam",
+               "lr": 0.002,
+               "clipnorm": 1
            },
            "workers": 8,
            "use_multiprocessing": True,
            "n_epochs": 10
            }
     nb_filters = []
-    kernel_size = {{choice([3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31])}}
+    kernel_size = {{choice([3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39])}}
     dilations = {{choice([[2 ** i for i in range(4)],
                           [2 ** i for i in range(5)],
                           [2 ** i for i in range(6)],
