@@ -2,11 +2,12 @@ import argparse
 from smd.data.data_generator import DataGenerator
 from smd.data.dataset_loader import DatasetLoader
 from smd.data import preprocessing
+from smd.data import postprocessing
+import smd.evaluation
 import smd.utils as utils
 import numpy as np
 import keras.models
 from tqdm import tqdm
-import smd.evaluation
 import os
 
 
@@ -21,12 +22,10 @@ def test_data_processing(spec_file, annotation_file, mean, std):
     return mels, label
 
 
-def evaluate(test_set, cfg, config_name, model_path, save_path):
-    print("Loading the model to resume " + model_path + "..")
-    if '%s' in model_path:
-        model = keras.models.load_model(model_path % config_name)
-    else:
-        model = keras.models.load_model(model_path)
+def evaluate(test_set, cfg, config_name, model_path, save_path, smoothing):
+    print("Loading the model " + model_path + "..")
+    model = keras.models.load_model(model_path)
+
     print("Start the prediction..")
 
     predictions = []
@@ -35,7 +34,11 @@ def evaluate(test_set, cfg, config_name, model_path, save_path):
     for i in tqdm(range(test_set.__len__())):
         x, y = test_set.__getitem__(i)
         x = x.reshape((1, x.shape[0], x.shape[1]))
-        predictions.append(model.predict(x, batch_size=1, verbose=0)[0].T)
+        output = model.predict(x, batch_size=1, verbose=0)[0].T
+        output = postprocessing.apply_threshold(output)
+        if smoothing:
+            output = postprocessing.smooth_output(output)
+        predictions.append(output)
         ground_truth.append(y.T)
 
     print("Post processing..")
@@ -44,8 +47,8 @@ def evaluate(test_set, cfg, config_name, model_path, save_path):
     ground_truth_events = []
 
     for p, gt in zip(predictions, ground_truth):
-        predictions_events.append(preprocessing.label_to_annotation(np.around(p)))
-        ground_truth_events.append(preprocessing.label_to_annotation(np.around(gt)))
+        predictions_events.append(preprocessing.label_to_annotation(p))
+        ground_truth_events.append(preprocessing.label_to_annotation(gt))
 
     print("Evaluation..")
 
@@ -60,7 +63,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Script to train a neural network for speech and music detection.")
 
-    parser.add_argument('--config', type=str, default="test1",
+    parser.add_argument('--config', type=str, default="test3",
                         help='the configuration of the training')
 
     parser.add_argument('--save_path', type=str, default=".",
@@ -69,8 +72,17 @@ if __name__ == "__main__":
     parser.add_argument('--data_location', type=str, default="/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
                         help='the location of the data')
 
-    parser.add_argument('--model', type=str, default="checkpoint/weights.%s.hdf5",
+    parser.add_argument('--model', type=str, default="trained/model.hdf5",
                         help='path of the model to load when the starting is resumed')
+
+    parser.add_argument('--mean_path', type=str, default="trained/mean.npy",
+                        help='path of the mean of the normalization applied with the model')
+
+    parser.add_argument('--std_path', type=str, default="trained/std.npy",
+                        help='path of the std of the normalization applied with the model')
+
+    parser.add_argument('--smoothing', type=int, default=1,
+                        help='0 or 1, apply to smoothing function to the ouput')
 
     args = parser.parse_args()
 
@@ -89,8 +101,11 @@ if __name__ == "__main__":
                              cfg["batch_size"],
                              cfg["target_seq_length"],
                              test_data_processing,
-                             dataset.get_training_mean(),
-                             dataset.get_training_std(),
+                             np.load(args.mean_path),
+                             np.load(args.std_path),
                              set_type="test")
+    smoothing = False
+    if args.smoothing == 1:
+        smoothing = True
 
-    evaluate(test_set, cfg, args.config, args.model, args.save_path)
+    evaluate(test_set, cfg, args.config, args.model, args.save_path, smoothing)
