@@ -1,5 +1,6 @@
 import argparse
 from smd.data import preprocessing
+from smd.data import postprocessing
 import smd.utils as utils
 import numpy as np
 import keras.models
@@ -36,7 +37,7 @@ def predict(data_path, model_path, mean_path, std_path):
         x = test_data_processing(file, mean, std)
         x = x.reshape((1, x.shape[0], x.shape[1]))
         output = model.predict(x, batch_size=1, verbose=0)[0].T
-        annotation = preprocessing.label_to_annotation(np.around(output).astype(int))
+        annotation = preprocessing.label_to_annotation(postprocessing.apply_threshold(output))
         output_path = file.replace(".npy", '') + "_prediction.txt"
         utils.save_annotation(annotation, output_path)
 

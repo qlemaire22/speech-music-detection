@@ -10,3 +10,12 @@ from .labels import get_label
 from .labels import label_to_annotation
 from .labels import time_to_frame
 from .labels import frame_to_time
+
+__all__ = ['get_spectrogram',
+           'get_scaled_mel_bands',
+           'normalize',
+           'get_log_melspectrogram',
+           'get_label',
+           'label_to_annotation',
+           'time_to_frame',
+           'frame_to_time']
