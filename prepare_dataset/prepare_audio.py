@@ -36,7 +36,7 @@ def resample_dataset(dataset_folder, dataset):
         print("Output folder created: " + NEW_DATA_PATH)
 
     if os.path.isdir(NEW_FILELISTS_FOLDER):
-        # raise ValueError(NEW_FILELISTS_FOLDER + " already exists.")
+        raise ValueError(NEW_FILELISTS_FOLDER + " already exists.")
         None
     else:
         os.makedirs(NEW_FILELISTS_FOLDER)
