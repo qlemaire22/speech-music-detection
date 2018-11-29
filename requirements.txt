@@ -8,4 +8,7 @@ tqdm==4.19.9
 Keras==2.2.4
 librosa==0.6.2
 sed_eval==0.2.1
-keras-tcn==2.2.3
+keras-tcn==2.3.3
+hyperopt==0.1.1
+scipy==1.1.0
+hyperas==0.4
