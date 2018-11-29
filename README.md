@@ -157,6 +157,17 @@ Here are the already implemented optimizers with their configuration.
       "decay": 1e-6
     }
 
+#### Adam
+
+    "optimizer": {
+      "name": "adam",
+      "lr": 0.001,
+      "beta_1": 0.9,
+      "beta_2": 0.999,
+      "epsilon": null,
+      "decay": 0.0
+    }
+
 ## Scripts
 
 - `train.py` to start the training of an experiment, different things can be decided in this file like the data pre-processing and augmentation, the learning rate scheduler and the early stopping.
