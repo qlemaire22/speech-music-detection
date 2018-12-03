@@ -156,7 +156,7 @@
     "model": {
       "type": "btcn",
       "list_n_filters": [64, 64, 64, 16, 64],
-      "kernel_size": 17,
+      "kernel_size": 39,
       "dilations": [1, 2, 4, 8, 16, 32, 64],
       "nb_stacks": 6,
       "activation": "norm_relu",
