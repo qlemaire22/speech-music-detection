@@ -350,7 +350,11 @@ def fit_b_tcn(train_set, val_set):
            {
                "name": "adam",
                "lr": 0.002,
-               "clipnorm": 1
+               "clipnorm": 1,
+               "beta_1": 0.9,
+               "beta_2": 0.999,
+               "epsilon": None,
+               "decay": 0.0
            },
            "workers": 8,
            "use_multiprocessing": True,
