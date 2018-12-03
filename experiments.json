@@ -173,6 +173,27 @@
         "decay": 0.0
       }
     },
+    "final_3": {
+      "model": {
+        "type": "btcn",
+        "list_n_filters": [16, 32],
+        "kernel_size": 19,
+        "dilations": [1, 2, 4, 8, 16, 32, 64, 128, 256],
+        "nb_stacks": 3,
+        "activation": "norm_relu",
+        "n_layers": 2,
+        "use_skip_connections": false,
+        "dropout_rate": 0.135883,
+        "optimizer": {
+          "name": "adam",
+          "lr": 0.002,
+          "clipnorm": 1,
+          "beta_1": 0.9,
+          "beta_2": 0.999,
+          "epsilon": null,
+          "decay": 0.0
+        }
+      },
     "dataset": [
       "ofai", "muspeak", "esc-50"
     ],
