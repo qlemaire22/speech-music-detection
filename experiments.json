@@ -152,6 +152,33 @@
     "workers": 8,
     "use_multiprocessing": true
   },
+  "final_2": {
+    "model": {
+      "type": "btcn",
+      "list_n_filters": [64, 64, 64, 16, 64],
+      "kernel_size": 17,
+      "dilations": [1, 2, 4, 8, 16, 32, 64],
+      "nb_stacks": 6,
+      "activation": "norm_relu",
+      "n_layers": 5,
+      "use_skip_connections": false,
+      "dropout_rate": 0.0397157,
+      "optimizer": {
+        "name": "SGD",
+        "lr": 0.001,
+        "momentum": 0.9,
+        "decay": 0
+      }
+    },
+    "dataset": [
+      "ofai", "muspeak", "esc-50"
+    ],
+    "batch_size": 32,
+    "nb_epoch": 50,
+    "target_seq_length": 270,
+    "workers": 8,
+    "use_multiprocessing": true
+  },
   "test3": {
     "model": {
       "type": "tcn",

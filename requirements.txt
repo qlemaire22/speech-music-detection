@@ -12,3 +12,4 @@ keras-tcn==2.3.3
 hyperopt==0.1.1
 scipy==1.1.0
 hyperas==0.4
+tensorflow==1.11.0

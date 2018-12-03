@@ -20,6 +20,7 @@ Installation with HomeBrew:
 The implementation is based on several Python libraries, especially:
 
 - `Keras` for the deep learning implementations [(link)](https://github.com/keras-team/keras).
+- `tensorflow` as Keras backend [(link)](https://www.tensorflow.org).
 - `Librosa` for the pre-processing of the audio [(link)](https://github.com/librosa/librosa).
 - `sed_eval` for the evaluation of the models [(link)](https://github.com/TUT-ARG/sed_eval).
 - `keras-tcn` for the implementation of the TCN [(link)](https://github.com/philipperemy/keras-tcn).
