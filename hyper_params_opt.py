@@ -358,10 +358,10 @@ def fit_b_tcn(train_set, val_set):
            },
            "workers": 8,
            "use_multiprocessing": True,
-           "n_epochs": 10
+           "n_epochs": 7
            }
     nb_filters = []
-    kernel_size = {{choice([3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39])}}
+    kernel_size = {{choice([11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41])}}
     dilations = {{choice([[2 ** i for i in range(4)],
                           [2 ** i for i in range(5)],
                           [2 ** i for i in range(6)],
@@ -369,8 +369,8 @@ def fit_b_tcn(train_set, val_set):
                           [2 ** i for i in range(8)],
                           [2 ** i for i in range(9)],
                           [2 ** i for i in range(10)]])}}
-    nb_stacks = {{choice([3, 4, 5, 6, 7, 8, 9, 10, 11, 12])}}
-    use_skip_connections = {{choice([True, False])}}
+    nb_stacks = {{choice([3, 4, 5, 6, 7, 8, 9, 10])}}
+    use_skip_connections = False
     n_layers = {{choice([1, 2, 3, 4, 5])}}
 
     nb_filters.append({{choice([8, 16, 32, 64])}})
@@ -389,7 +389,7 @@ def fit_b_tcn(train_set, val_set):
                                nb_stacks=nb_stacks,
                                n_layers=n_layers,
                                use_skip_connections=use_skip_connections,
-                               dropout_rate={{uniform(0.01, 0.2)}})
+                               dropout_rate={{uniform(0.01, 0.25)}})
 
     n_params = model.count_params()
     print(n_params)
