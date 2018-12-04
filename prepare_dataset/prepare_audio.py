@@ -11,6 +11,7 @@ import argparse
 import smd.utils as utils
 import smd.data.preprocessing as preprocessing
 import numpy as np
+from shutil import copyfile
 
 
 def resample_dataset(dataset_folder, dataset):
@@ -122,6 +123,12 @@ def resample_dataset(dataset_folder, dataset):
 
 
 def run_sox(input_file, output_file, sampling_rate, max_length):
+    annotation = input_file.replace(os.path.splitext(input_file)[1], '.txt')
+    events = utils.read_annotation(annotation)
+
+    if events == [['music']] or events == [['speech']] or events == [['noise']]:
+        remove_silences(input_file)
+
     command = "sox -V3 -v 0.99 " + input_file + " -r " + str(sampling_rate) + \
         " -c 1 -b 32 " + output_file + " trim 0 " + \
         str(max_length) + " : newfile : restart"
@@ -132,10 +139,6 @@ def run_sox(input_file, output_file, sampling_rate, max_length):
     for line in data:
         if "Output File" in line:
             files.append(re.search("'(.+?)'", line).group(1))
-
-    annotation = input_file.replace(os.path.splitext(input_file)[1], '.txt')
-
-    events = utils.read_annotation(annotation)
 
     n = len(files)
 
@@ -165,6 +168,15 @@ def run_sox(input_file, output_file, sampling_rate, max_length):
         utils.save_annotation(valid_events, new_annotation)
 
     return files
+
+
+def remove_silences(input_file):
+    temp_file = input_file.replace('.wav', '_t.wav')
+    command = "sox " + input_file + " " + temp_file + " silence -l 1 0.1 1% -1 0.1 1%"
+    p = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+    output, err = p.communicate()
+    copyfile(temp_file, input_file)
+    os.remove(temp_file)
 
 
 def savespec_and_get_bands(file):

@@ -24,7 +24,7 @@ def data():
     cfg = {"dataset": ["ofai", "muspeak", "esc-50"],
            "data_location": "/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
            "target_seq_length": 270,
-           "batch_size": 32
+           "batch_size": 16
            }
 
     def training_data_processing(spec_file, annotation_file, mean, std, spec_file2=None, annotation_file2=None):
