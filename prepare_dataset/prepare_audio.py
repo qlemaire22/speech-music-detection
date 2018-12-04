@@ -70,30 +70,33 @@ def resample_dataset(dataset_folder, dataset):
 
                     if set_type == 'train':
                         length, bands = savespec_and_get_bands(new_file)
-                        n += length
-                        n_tot += length
-                        delta1 = bands - mean[:, None]
-                        mean += np.sum(delta1, axis=1) / n
-                        delta2 = bands - mean[:, None]
-                        var += np.sum(delta1 * delta2, axis=1)
-                        if audio_type == "mixed":
-                            n_mixed += length
-                        elif audio_type == "speech":
-                            n_speech += length
-                        elif audio_type == "music":
-                            n_music += length
-                        elif audio_type == "noise":
-                            n_noise += length
+                        if length > 0:
+                            n += length
+                            n_tot += length
+                            delta1 = bands - mean[:, None]
+                            mean += np.sum(delta1, axis=1) / n
+                            delta2 = bands - mean[:, None]
+                            var += np.sum(delta1 * delta2, axis=1)
+                            if audio_type == "mixed":
+                                n_mixed += length
+                            elif audio_type == "speech":
+                                n_speech += length
+                            elif audio_type == "music":
+                                n_music += length
+                            elif audio_type == "noise":
+                                n_noise += length
                     elif set_type == 'val':
                         length = savespec(new_file)
-                        n_tot += length
-                        n_val += length
+                        if length > 0:
+                            n_tot += length
+                            n_val += length
                     elif set_type == 'test':
                         length = savespec(new_file)
-                        n_tot += length
-                        n_test += length
+                        if length > 0:
+                            n_tot += length
+                            n_test += length
 
-                    if length > 10:
+                    if length > 0:
                         with open(os.path.join(NEW_FILELISTS_FOLDER, key), 'a') as f:
                             f.write(os.path.basename(new_file).replace(".wav", '') + '\t' + str(length) + '\n')
 
@@ -181,23 +184,29 @@ def remove_silences(input_file):
 
 def savespec_and_get_bands(file):
     audio = utils.load_audio(file)
+    if len(audio) > 200:
+        spec = preprocessing.get_spectrogram(audio)
+        bands = preprocessing.get_scaled_mel_bands(spec)
 
-    spec = preprocessing.get_spectrogram(audio)
-    bands = preprocessing.get_scaled_mel_bands(spec)
-
-    length = bands.shape[1]
-    utils.save_matrix(spec, file.replace(".wav", ''))
-    return length, bands
+        length = bands.shape[1]
+        utils.save_matrix(spec, file.replace(".wav", ''))
+        return length, bands
+    else:
+        print("empty file: " + file)
+        return 0, []
 
 
 def savespec(file):
     audio = utils.load_audio(file)
+    if len(audio) > 200:
+        spec = preprocessing.get_spectrogram(audio)
 
-    spec = preprocessing.get_spectrogram(audio)
-
-    length = spec.shape[1]
-    utils.save_matrix(spec, file.replace(".wav", ''))
-    return length
+        length = spec.shape[1]
+        utils.save_matrix(spec, file.replace(".wav", ''))
+        return length
+    else:
+        print("empty file: " + file)
+        return 0
 
 
 if __name__ == '__main__':
