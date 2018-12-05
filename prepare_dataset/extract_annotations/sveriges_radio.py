@@ -30,7 +30,6 @@ if __name__ == "__main__":
 
     print("Number of audio files: " + str(len(audio_files)))
 
-    mixed = []
     music = []
     speech = []
     noise = []
@@ -47,16 +46,10 @@ if __name__ == "__main__":
         elif "noise" in os.path.basename(file):
             utils.save_annotation([["noise"]], os.path.basename(file).replace(".wav", "") + ".txt", AUDIO_PATH)
             noise.append(file)
-        elif "mixed" in os.path.basename(file):
-            events = [[0, 15, "speech"], [0, 15, "music"]]
-            utils.save_annotation(events, os.path.basename(file).replace(".wav", "") + ".txt", AUDIO_PATH)
-            mixed.append(file)
 
     music_train = np.random.choice(music, size=int(len(music) * 0.8), replace=False)
     speech_train = np.random.choice(speech, size=int(len(speech) * 0.8), replace=False)
     noise_train = np.random.choice(noise, size=int(len(noise) * 0.8), replace=False)
-    mixed_train = np.random.choice(mixed, size=int(len(mixed) * 0.8), replace=False)
-
     for file in music:
         if file in music_train:
             with open(os.path.join(FILELISTS_PATH, 'music_train'), 'a') as f:
@@ -79,12 +72,4 @@ if __name__ == "__main__":
                 f.write(os.path.basename(file) + '\n')
         else:
             with open(os.path.join(FILELISTS_PATH, 'noise_val'), 'a') as f:
-                f.write(os.path.basename(file) + '\n')
-
-    for file in mixed:
-        if file in mixed_train:
-            with open(os.path.join(FILELISTS_PATH, 'mixed_train'), 'a') as f:
-                f.write(os.path.basename(file) + '\n')
-        else:
-            with open(os.path.join(FILELISTS_PATH, 'mixed_val'), 'a') as f:
                 f.write(os.path.basename(file) + '\n')
