@@ -224,10 +224,13 @@
       "use_skip_connections": false,
       "dropout_rate": 0.0397157,
       "optimizer": {
-        "name": "SGD",
-        "lr": 0.001,
-        "momentum": 0.9,
-        "decay": 0
+        "name": "adam",
+        "lr": 0.002,
+        "clipnorm": 1,
+        "beta_1": 0.9,
+        "beta_2": 0.999,
+        "epsilon": null,
+        "decay": 0.0
       }
     },
     "dataset": [
