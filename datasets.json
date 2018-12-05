@@ -8,8 +8,8 @@
     "filelists_folder": "ofai/filelists"
   },
   "sveriges_radio": {
-    "data_folder": "",
-    "filelists_folder": ""
+    "data_folder": "sveriges_radio/audio",
+    "filelists_folder": "sveriges_radio/filelists"
   },
   "musan": {
     "data_folder": "musan/audio",

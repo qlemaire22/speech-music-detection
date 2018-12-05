@@ -4,6 +4,7 @@
       "type": "blstm",
       "hidden_units": [175, 25, 100, 50],
       "dropout": 0.054614,
+      "bidirectional": true,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -28,6 +29,7 @@
       "stride_list": [1, 1],
       "dilation_rate_list": [1, 1],
       "dropout": 0.351789,
+      "bidirectional": true,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -53,8 +55,9 @@
       "nb_stacks": 6,
       "activation": "norm_relu",
       "n_layers": 2,
-      "use_skip_connections": false,
       "dropout_rate": 0.0764055,
+      "use_skip_connections": false,
+      "bidirectional": false,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -80,8 +83,9 @@
       "nb_stacks": 7,
       "activation": "norm_relu",
       "n_layers": 2,
-      "use_skip_connections": false,
       "dropout_rate": 0.075669,
+      "use_skip_connections": false,
+      "bidirectional": true,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -107,8 +111,9 @@
       "nb_stacks": 6,
       "activation": "norm_relu",
       "n_layers": 2,
-      "use_skip_connections": false,
       "dropout_rate": 0.0764055,
+      "use_skip_connections": false,
+      "bidirectional": false,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -134,8 +139,9 @@
       "nb_stacks": 7,
       "activation": "norm_relu",
       "n_layers": 2,
-      "use_skip_connections": false,
       "dropout_rate": 0.075669,
+      "use_skip_connections": false,
+      "bidirectional": true,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -161,8 +167,9 @@
       "nb_stacks": 6,
       "activation": "norm_relu",
       "n_layers": 5,
-      "use_skip_connections": false,
       "dropout_rate": 0.0397157,
+      "use_skip_connections": false,
+      "bidirectional": true,
       "optimizer": {
         "name": "adam",
         "lr": 0.002,
@@ -191,8 +198,9 @@
       "nb_stacks": 3,
       "activation": "norm_relu",
       "n_layers": 2,
-      "use_skip_connections": false,
       "dropout_rate": 0.135883,
+      "use_skip_connections": false,
+      "bidirectional": true,
       "optimizer": {
         "name": "adam",
         "lr": 0.002,
@@ -221,8 +229,9 @@
       "nb_stacks": 6,
       "activation": "norm_relu",
       "n_layers": 5,
-      "use_skip_connections": false,
       "dropout_rate": 0.0397157,
+      "use_skip_connections": false,
+      "bidirectional": true,
       "optimizer": {
         "name": "adam",
         "lr": 0.002,
@@ -251,8 +260,9 @@
       "nb_stacks": 3,
       "activation": "norm_relu",
       "n_layers": 1,
-      "use_skip_connections": true,
       "dropout_rate": 0.05,
+      "use_skip_connections": true,
+      "bidirectional": false,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
