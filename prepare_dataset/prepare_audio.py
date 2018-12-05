@@ -174,7 +174,7 @@ def run_sox(input_file, output_file, sampling_rate, max_length):
 
 
 def remove_silences(input_file):
-    temp_file = input_file.replace('.wav', '_t.wav')
+    temp_file = input_file.replace('.wav', '_t.wav').replace('.WAV', '_t.WAV').replace('.mp3', '_t.mp3').replace('.MP3', '_t.MP3')
     command = "sox " + input_file + " " + temp_file + " silence -l 1 0.1 1% -1 0.1 1%"
     p = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
     output, err = p.communicate()
