@@ -251,6 +251,37 @@
     "workers": 8,
     "use_multiprocessing": true
   },
+  "low_quality": {
+    "model": {
+      "type": "btcn",
+      "list_n_filters": [64, 64, 64, 16, 64],
+      "kernel_size": 39,
+      "dilations": [1, 2, 4, 8, 16, 32, 64],
+      "nb_stacks": 6,
+      "activation": "norm_relu",
+      "n_layers": 5,
+      "dropout_rate": 0.0397157,
+      "use_skip_connections": false,
+      "bidirectional": true,
+      "optimizer": {
+        "name": "adam",
+        "lr": 0.002,
+        "clipnorm": 1,
+        "beta_1": 0.9,
+        "beta_2": 0.999,
+        "epsilon": null,
+        "decay": 0.0
+      }
+    },
+    "dataset": [
+      "sveriges_radio", "musan", "gtzan", "scheirer_slaney"
+    ],
+    "batch_size": 16,
+    "nb_epoch": 50,
+    "target_seq_length": 270,
+    "workers": 8,
+    "use_multiprocessing": true
+  },
   "test3": {
     "model": {
       "type": "tcn",
