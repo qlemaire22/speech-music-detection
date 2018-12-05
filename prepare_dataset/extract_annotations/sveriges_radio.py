@@ -3,120 +3,88 @@ sys.path.append("../..")
 import glob
 import os.path
 import smd.utils as utils
-from tqdm import tqdm
-import xml.etree.ElementTree as ET
-import dateparser
-import datetime
 import numpy as np
+from subprocess import Popen, PIPE
+from shutil import copyfile
 
-DATASET_PATH = "/Users/quentin/Computer/DataSet/Music/speech_music_detection/sveriges_radio/"
-AUDIO_PATH = DATASET_PATH
-ANNOTATION_PATH = DATASET_PATH
+AUDIO_PATH = "/Users/quentin/Computer/DataSet/Music/speech_music_detection/sveriges_radio/audio"
+FILELISTS_PATH = "/Users/quentin/Computer/DataSet/Music/speech_music_detection/sveriges_radio/filelists"
 
 
 def load_files():
-    audio_files = glob.glob(AUDIO_PATH + "/*.WAV")
-    label_files = glob.glob(ANNOTATION_PATH + "/*.XML")
-    return audio_files, label_files
+    audio_files = glob.glob(AUDIO_PATH + "/*.wav")
+    return audio_files
 
 
-def find_associated_label(audio_file, label_files):
-    name = os.path.basename(audio_file).replace(".WAV", "")
-    for label in label_files:
-        if name in label:
-            return label
-    raise ValueError("Incorrect input: the associated label in not present.")
-
-
-def print_timedelta(time):
-    s = time.seconds
-    # ms = time.microsecond
-    h = int(s / 3600.0)
-    s = s - h * 3600
-    m = int(s / 60.0)
-    s = s - m * 60
-    if m < 10:
-        m = "0" + str(m)
-    return str(h) + ":" + str(m) + ":" + str(s)
-    # return str(s) + "." + str(ms)
-
-
-def get_event_list(label_file):
-    events = []
-    file = open(label_file, encoding='utf-16-le')
-    root = ET.fromstring(file.read())
-    file.close()
-    files = []
-    events = []
-    starting_time = None
-    trackn = 0
-    groupn = 0
-    for child in root:
-        if child.tag == "Track":
-            trackn += 1
-            print("new track")
-            for group in child:
-                print(group)
-                # if group.tag == "Type":
-                #     print(group.text)
-
-                if group.tag == "Group":
-                    groupn += 1
-                    for element in group:
-                        if element.tag == "Element":
-                            event = []
-                            for sub_element in element:
-                                # print(sub_element.tag)
-                                if sub_element.tag == "File_Filename0":
-                                    # print(sub_element.text)
-                                    files.append(sub_element.text)
-                                elif sub_element.tag == "Time_Start":
-                                    time = dateparser.parse(
-                                        sub_element.text).time()
-                                    if starting_time is None:
-                                        starting_time = time
-                                    time = datetime.datetime.combine(datetime.date.today(
-                                    ), time) - datetime.datetime.combine(datetime.date.today(), starting_time)
-                                    event.append(print_timedelta(time))
-                                    if print_timedelta(time) == '0:00:0':
-                                        print("BEGINNING")
-                                elif sub_element.tag == "Time_Stop":
-                                    time = dateparser.parse(
-                                        sub_element.text).time()
-                                    time = datetime.datetime.combine(datetime.date.today(
-                                    ), time) - datetime.datetime.combine(datetime.date.today(), starting_time)
-                                    event.append(print_timedelta(time))
-                            events.append(event)
-
-    print(len(files))
-    print(len(events))
-    for i in range(len(files)):
-        print(files[i], events[i])
-    print(len(files))
-    print(len(events))
-    print(len(np.unique(files)))
-    print(len(np.unique(events)))
-
-    print(trackn)
-    print(groupn)
-    return events
-
-
-def concatenate_events(events_1, events_2):
-    return events_1 + events_2
+def remove_beginning(input_file):
+    temp_file = input_file.replace('.wav', '_t.wav')
+    command = "sox " + input_file + " " + temp_file + " trim 3"
+    p = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+    output, err = p.communicate()
+    copyfile(temp_file, input_file)
+    os.remove(temp_file)
 
 
 if __name__ == "__main__":
-    audio_files, label_files = load_files()
+    audio_files = load_files()
 
     print("Number of audio files: " + str(len(audio_files)))
-    print("Number of label files: " + str(len(label_files)))
 
-    for audio in tqdm(audio_files):
-        label = find_associated_label(audio, label_files)
-        events = get_event_list(label)
+    mixed = []
+    music = []
+    speech = []
+    noise = []
 
-        exit()
+    for file in audio_files:
+        if "music" in os.path.basename(file):
+            utils.save_annotation([["music"]], os.path.basename(file).replace(".wav", "") + ".txt", AUDIO_PATH)
+            music.append(file)
+        elif "speech" in os.path.basename(file):
+            utils.save_annotation([["speech"]], os.path.basename(file).replace(".wav", "") + ".txt", AUDIO_PATH)
+            speech.append(file)
+            if "totrim" in os.path.basename(file):
+                remove_beginning(file)
+        elif "noise" in os.path.basename(file):
+            utils.save_annotation([["noise"]], os.path.basename(file).replace(".wav", "") + ".txt", AUDIO_PATH)
+            noise.append(file)
+        elif "mixed" in os.path.basename(file):
+            events = [[0, 15, "speech"], [0, 15, "music"]]
+            utils.save_annotation(events, os.path.basename(file).replace(".wav", "") + ".txt", AUDIO_PATH)
+            mixed.append(file)
 
-        utils.save_annotation(events, os.path.basename(
-            audio).replace(".WAV", "") + ".txt", AUDIO_PATH)
+    music_train = np.random.choice(music, size=int(len(music) * 0.8), replace=False)
+    speech_train = np.random.choice(speech, size=int(len(speech) * 0.8), replace=False)
+    noise_train = np.random.choice(noise, size=int(len(noise) * 0.8), replace=False)
+    mixed_train = np.random.choice(mixed, size=int(len(mixed) * 0.8), replace=False)
+
+    for file in music:
+        if file in music_train:
+            with open(os.path.join(FILELISTS_PATH, 'music_train'), 'a') as f:
+                f.write(os.path.basename(file) + '\n')
+        else:
+            with open(os.path.join(FILELISTS_PATH, 'music_val'), 'a') as f:
+                f.write(os.path.basename(file) + '\n')
+
+    for file in speech:
+        if file in speech_train:
+            with open(os.path.join(FILELISTS_PATH, 'speech_train'), 'a') as f:
+                f.write(os.path.basename(file) + '\n')
+        else:
+            with open(os.path.join(FILELISTS_PATH, 'speech_val'), 'a') as f:
+                f.write(os.path.basename(file) + '\n')
+
+    for file in noise:
+        if file in noise_train:
+            with open(os.path.join(FILELISTS_PATH, 'noise_train'), 'a') as f:
+                f.write(os.path.basename(file) + '\n')
+        else:
+            with open(os.path.join(FILELISTS_PATH, 'noise_val'), 'a') as f:
+                f.write(os.path.basename(file) + '\n')
+
+    for file in mixed:
+        if file in mixed_train:
+            with open(os.path.join(FILELISTS_PATH, 'mixed_train'), 'a') as f:
+                f.write(os.path.basename(file) + '\n')
+        else:
+            with open(os.path.join(FILELISTS_PATH, 'mixed_val'), 'a') as f:
+                f.write(os.path.basename(file) + '\n')
