@@ -117,14 +117,14 @@ class DatasetLoader():
     def get_training_std(self):
         return self.train_std
 
-    def load_list(self, filename, label_type, data_list, data_path):
-        with open(filename, 'r') as f:
+    def load_list(self, list_file, label_type, data_list, data_path):
+        with open(list_file, 'r') as f:
             files = f.readlines()
         for file in files:
+            filename, length = file.replace('\n', '').split('\t')
             if self.verify:
                 if not(os.path.isfile(file)):
-                    print("File not found: " + file + " in " + filename)
-            filename, length = file.replace('\n', '').split('\t')
+                    print("File not found: " + filename + " in " + list_file)
             data_list[label_type].append((os.path.join(data_path, filename), length))
 
     def combine_means(self, ms, ns):
