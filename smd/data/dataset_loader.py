@@ -6,8 +6,9 @@ import smd.config as config
 
 
 class DatasetLoader():
-    def __init__(self, datasets, dataset_folder, datasets_config):
+    def __init__(self, datasets, dataset_folder, datasets_config, verify=False):
         self.cfg = datasets_config
+        self.verify = verify
 
         self.train_set = {"mixed": [],
                           "music": [],
@@ -120,6 +121,9 @@ class DatasetLoader():
         with open(filename, 'r') as f:
             files = f.readlines()
         for file in files:
+            if self.verify:
+                if not(os.path.isfile(file)):
+                    print("File not found: " + file + " in " + filename)
             filename, length = file.replace('\n', '').split('\t')
             data_list[label_type].append((os.path.join(data_path, filename), length))
 
