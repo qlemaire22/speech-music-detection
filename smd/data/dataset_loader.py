@@ -123,7 +123,7 @@ class DatasetLoader():
         for file in files:
             filename, length = file.replace('\n', '').split('\t')
             if self.verify:
-                if not(os.path.isfile(file)):
+                if not(os.path.isfile(os.path.join(data_path, filename))):
                     print("File not found: " + filename + " in " + list_file)
             data_list[label_type].append((os.path.join(data_path, filename), length))
 
