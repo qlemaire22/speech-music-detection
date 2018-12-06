@@ -4,7 +4,7 @@ from hyperopt import Trials, STATUS_OK, tpe
 from hyperas import optim
 from hyperas.distributions import choice, uniform, conditional
 
-from smd.models import tcn, b_lstm, b_conv_lstm, b_tcn
+from smd.models import tcn, lstm, conv_lstm
 import smd.config as config
 import smd.utils as utils
 from smd.data.data_generator import DataGenerator
@@ -115,8 +115,7 @@ def fit_b_lstm(train_set, val_set):
                 layers.append(
                     {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
 
-    model = b_lstm.create_b_lstm(
-        hidden_units=layers, dropout={{uniform(0.05, 0.5)}})
+    model = lstm.create_lstm(hidden_units=layers, dropout={{uniform(0.05, 0.5)}}, bidirectional=True)
 
     n_params = model.count_params()
     print(n_params)
@@ -295,7 +294,8 @@ def fit_tcn(train_set, val_set):
                            nb_stacks=nb_stacks,
                            n_layers=n_layers,
                            use_skip_connections=use_skip_connections,
-                           dropout_rate={{uniform(0.05, 0.5)}})
+                           dropout_rate={{uniform(0.05, 0.5)}},
+                           bidirectional=False)
 
     n_params = model.count_params()
     print(n_params)
@@ -383,13 +383,14 @@ def fit_b_tcn(train_set, val_set):
                 if conditional(n_layers) >= 5:
                     nb_filters.append({{choice([8, 16, 32, 64])}})
 
-    model = b_tcn.create_b_tcn(list_n_filters=nb_filters,
-                               kernel_size=kernel_size,
-                               dilations=dilations,
-                               nb_stacks=nb_stacks,
-                               n_layers=n_layers,
-                               use_skip_connections=use_skip_connections,
-                               dropout_rate={{uniform(0.01, 0.25)}})
+    model = tcn.create_tcn(list_n_filters=nb_filters,
+                           kernel_size=kernel_size,
+                           dilations=dilations,
+                           nb_stacks=nb_stacks,
+                           n_layers=n_layers,
+                           use_skip_connections=use_skip_connections,
+                           dropout_rate={{uniform(0.01, 0.25)}},
+                           bidirectional=True)
 
     n_params = model.count_params()
     print(n_params)

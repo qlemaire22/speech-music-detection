@@ -26,6 +26,8 @@ The implementation is based on several Python libraries, especially:
 - `keras-tcn` for the implementation of the TCN [(link)](https://github.com/philipperemy/keras-tcn).
 - `hyperas` for hyper-parameters optimization on Keras with Hyperopt [(link)](https://github.com/maxpumperla/hyperas).
 
+If you want to use `prepare_dataset/mp2_to_wav.py` to convert MP2 audio to WAV, you need the command line utility `FFmpeg` ([HomePage](https://www.ffmpeg.org)).
+
 Installation of the Python libraries with PyPi:
 
     pip install -r requirements.txt
@@ -107,12 +109,13 @@ New models can be added in the folder `smd/models` and loaded in `smd/models/mod
 
 Here are the architectures already implemented with their configuration:
 
-#### B-LTSM
+#### LTSM
 
     "model": {
       "type": "blstm",
       "hidden_units": [100, 100, 100],
       "dropout": 0.2,
+      "bidirectional": true,
       "optimizer": ...
     }
 
@@ -125,6 +128,7 @@ Here are the architectures already implemented with their configuration:
       "stride_list": [1, 1],
       "dilation_rate_list": [1, 1],
       "dropout": 0.2,
+      "bidirectional": true,
       "optimizer": ...
     }
 
@@ -138,8 +142,9 @@ Here are the architectures already implemented with their configuration:
       "nb_stacks": 3,
       "n_layers": 1,
       "activation": "norm_relu",
-      "use_skip_connections": true,
       "dropout_rate": 0.05,
+      "use_skip_connections": true,
+      "bidirectional": true,
       "optimizer": ...
     }
 

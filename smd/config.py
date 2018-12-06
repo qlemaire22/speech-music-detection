@@ -20,7 +20,7 @@ BLOCK_MIXING_MAX = 0.9
 # Model config
 
 LOSS = "binary_crossentropy"
-METRICS = ["categorical_accuracy"]
+METRICS = ["binary_accuracy", "categorical_accuracy"]
 CLASSES = 2
 
 # For audio augmentation - deprecated

@@ -13,11 +13,12 @@ FILELISTS_PATH = "/Users/quentin/Computer/DataSet/Music/speech_music_detection/s
 
 def load_files():
     audio_files = glob.glob(AUDIO_PATH + "/*.wav")
+    audio_files += glob.glob(AUDIO_PATH + "/*.WAV")
     return audio_files
 
 
 def remove_beginning(input_file):
-    temp_file = input_file.replace('.wav', '_t.wav')
+    temp_file = input_file.replace('.wav', '_t.wav').replace('.WAV', '_t.WAV')
     command = "sox " + input_file + " " + temp_file + " trim 3"
     p = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
     output, err = p.communicate()
@@ -36,15 +37,15 @@ if __name__ == "__main__":
 
     for file in audio_files:
         if "music" in os.path.basename(file):
-            utils.save_annotation([["music"]], os.path.basename(file).replace(".wav", "") + ".txt", AUDIO_PATH)
+            utils.save_annotation([["music"]], os.path.basename(file).replace(".wav", "").replace(".WAV", "") + ".txt", AUDIO_PATH)
             music.append(file)
         elif "speech" in os.path.basename(file):
-            utils.save_annotation([["speech"]], os.path.basename(file).replace(".wav", "") + ".txt", AUDIO_PATH)
+            utils.save_annotation([["speech"]], os.path.basename(file).replace(".wav", "").replace(".WAV", "") + ".txt", AUDIO_PATH)
             speech.append(file)
             if "totrim" in os.path.basename(file):
                 remove_beginning(file)
         elif "noise" in os.path.basename(file):
-            utils.save_annotation([["noise"]], os.path.basename(file).replace(".wav", "") + ".txt", AUDIO_PATH)
+            utils.save_annotation([["noise"]], os.path.basename(file).replace(".wav", "").replace(".WAV", "") + ".txt", AUDIO_PATH)
             noise.append(file)
 
     music_train = np.random.choice(music, size=int(len(music) * 0.8), replace=False)
