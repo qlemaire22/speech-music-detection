@@ -119,7 +119,7 @@ Here are the architectures already implemented with their configuration:
       "optimizer": ...
     }
 
-#### B-ConvLSTM
+#### ConvLSTM
 
     "model": {
       "type": "bconvlstm",

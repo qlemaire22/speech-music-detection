@@ -9,12 +9,13 @@ import librosa
 
 def read_filelists(folder):
     """Read and return the filelists of a dataset."""
-    files = ["mixed_val", "mixed_train", "mixed_test", "noise_train", "music_train", "music_val", "speech_train", "speech_val"]
+    files = ["mixed_val", "mixed_train", "mixed_test", "noise_train", "noise_val", "music_train", "music_val", "speech_train", "speech_val"]
 
     dic = {"mixed_val": [],
            "mixed_train": [],
            "mixed_test": [],
            "noise_train": [],
+           "noise_val": [],
            "music_train": [],
            "music_val": [],
            "speech_train": [],

@@ -74,9 +74,9 @@
     "workers": 8,
     "use_multiprocessing": true
   },
-  "exp4_btcn": {
+  "exp4_tcn": {
     "model": {
-      "type": "btcn",
+      "type": "tcn",
       "list_n_filters": [16, 32],
       "kernel_size": 17,
       "dilations": [1, 2, 4, 8],
@@ -132,7 +132,7 @@
   },
   "final_1": {
     "model": {
-      "type": "btcn",
+      "type": "tcn",
       "list_n_filters": [16, 32],
       "kernel_size": 17,
       "dilations": [1, 2, 4, 8],
@@ -160,7 +160,7 @@
   },
   "final_2": {
     "model": {
-      "type": "btcn",
+      "type": "tcn",
       "list_n_filters": [64, 64, 64, 16, 64],
       "kernel_size": 39,
       "dilations": [1, 2, 4, 8, 16, 32, 64],
@@ -191,7 +191,7 @@
   },
   "final_3": {
     "model": {
-      "type": "btcn",
+      "type": "tcn",
       "list_n_filters": [16, 32],
       "kernel_size": 19,
       "dilations": [1, 2, 4, 8, 16, 32, 64, 128, 256],
@@ -222,7 +222,7 @@
   },
   "high_quality": {
     "model": {
-      "type": "btcn",
+      "type": "tcn",
       "list_n_filters": [64, 64, 64, 16, 64],
       "kernel_size": 39,
       "dilations": [1, 2, 4, 8, 16, 32, 64],
@@ -253,7 +253,7 @@
   },
   "low_quality": {
     "model": {
-      "type": "btcn",
+      "type": "tcn",
       "list_n_filters": [64, 64, 64, 16, 64],
       "kernel_size": 39,
       "dilations": [1, 2, 4, 8, 16, 32, 64],
@@ -284,7 +284,7 @@
   },
   "all_quality": {
     "model": {
-      "type": "btcn",
+      "type": "tcn",
       "list_n_filters": [64, 64, 64, 16, 64],
       "kernel_size": 39,
       "dilations": [1, 2, 4, 8, 16, 32, 64],

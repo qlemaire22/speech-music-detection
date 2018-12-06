@@ -13,6 +13,10 @@ def load_files():
 
 
 def convert(input_file):
+    new_name = input_file.replace(" ", "")
+    os.rename(input_file, new_name)
+    os.rename(input_file.replace(".wav", ".txt"), new_name.replace(".wav", ".txt"))
+    input_file = new_name
     temp_file = input_file.replace('.WAV', '_t.WAV')
     command = "ffmpeg -i " + input_file + " " + temp_file
     p = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
