@@ -1,7 +1,7 @@
 import argparse
 from smd.data.data_generator import DataGenerator
 from smd.data.dataset_loader import DatasetLoader
-from smd.models.model_loader import load_model
+from smd.models.model_loader import load_model, compile_model
 from smd.data.data_augmentation import random_loudness_spec, random_filter_spec, block_mixing_spec, pitch_time_deformation_spec
 from smd.data import preprocessing
 import smd.utils as utils
@@ -45,12 +45,14 @@ def validation_data_processing(spec_file, annotation_file, mean, std):
 
 
 def train(train_set, val_set, cfg, config_name, resume, model_path):
-    if resume:
-        print("Loading the model " + model_path + "..")
-        if '%s' in model_path:
-            model = keras.models.load_model(model_path % config_name)
+    if not(model_path is None):
+        if resume:
+            print("Loading compiled model: " + model_path)
+            model = keras.models.load_model(model_path, compile=True)
         else:
-            model = keras.models.load_model(model_path)
+            print("Loading uncompiled model: " + model_path)
+            model = keras.models.load_model(model_path, compile=False)
+            model = compile_model(model, cfg["model"])
     else:
         print("Loading the network..")
         model = load_model(cfg["model"])
@@ -98,7 +100,7 @@ if __name__ == "__main__":
     parser.add_argument('--resume', type=bool, default=False,
                         help='set to true to restart a previous starning')
 
-    parser.add_argument('--model', type=str, default="checkpoint/weights.%s.hdf5",
+    parser.add_argument('--model', type=str, default=None,
                         help='path of the model to load when the starting is resumed')
 
     args = parser.parse_args()

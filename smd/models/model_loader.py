@@ -49,3 +49,24 @@ def load_model(cfg):
 
     model.summary()
     return model
+
+
+def compile_model(model, cfg):
+    if cfg["optimizer"]["name"] == "SGD":
+        optimizer = optimizers.SGD(
+            lr=cfg["optimizer"]["lr"], momentum=cfg["optimizer"]["momentum"], decay=cfg["optimizer"]["decay"])
+    elif cfg["optimizer"]["name"] == "adam":
+        optimizer = optimizers.adam(lr=cfg["optimizer"]["lr"],
+                                    beta_1=cfg["optimizer"]["beta_1"],
+                                    beta_2=cfg["optimizer"]["beta_2"],
+                                    epsilon=cfg["optimizer"]["epsilon"],
+                                    decay=cfg["optimizer"]["decay"],
+                                    clipnorm=cfg["optimizer"]["clipnorm"])
+    else:
+        raise ValueError(
+            "Configuration error: the specified optimizer is not yet implemented.")
+
+    model.compile(optimizer, loss=config.LOSS, metrics=config.METRICS)
+
+    model.summary()
+    return model

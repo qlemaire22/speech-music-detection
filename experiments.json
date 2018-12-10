@@ -1,7 +1,7 @@
 {
   "exp1_blstm": {
     "model": {
-      "type": "blstm",
+      "type": "lstm",
       "hidden_units": [175, 25, 100, 50],
       "dropout": 0.054614,
       "bidirectional": true,
@@ -23,7 +23,7 @@
   },
   "exp2_bconvlstm": {
     "model": {
-      "type": "bconvlstm",
+      "type": "convlstm",
       "filters_list": [16, 8],
       "kernel_size_list": [3, 3],
       "stride_list": [1, 1],
@@ -243,7 +243,7 @@
       }
     },
     "dataset": [
-      "ofai", "muspeak", "esc-50"
+      "ofai", "muspeak"
     ],
     "batch_size": 16,
     "nb_epoch": 50,

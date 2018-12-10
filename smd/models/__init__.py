@@ -6,6 +6,6 @@ from . import lstm
 from . import conv_lstm
 from . import tcn
 
-from .model_loader import load_model
+from .model_loader import load_model, compile_model
 
-__all__ = ['lstm', 'conv_lstm', 'tcn', 'load_model']
+__all__ = ['lstm', 'conv_lstm', 'tcn', 'load_model', 'compile_model']

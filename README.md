@@ -112,7 +112,7 @@ Here are the architectures already implemented with their configuration:
 #### LTSM
 
     "model": {
-      "type": "blstm",
+      "type": "lstm",
       "hidden_units": [100, 100, 100],
       "dropout": 0.2,
       "bidirectional": true,
@@ -122,7 +122,7 @@ Here are the architectures already implemented with their configuration:
 #### ConvLSTM
 
     "model": {
-      "type": "bconvlstm",
+      "type": "convlstm",
       "filters_list": [50, 50],
       "kernel_size_list": [3, 3],
       "stride_list": [1, 1],
