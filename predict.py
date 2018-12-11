@@ -47,7 +47,7 @@ def predict(data_path, model_path, mean_path, std_path, smoothing):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Script to train a neural network for speech and music detection.")
+        description="Script to do the prediction with a neural network for the speech and music detection task.")
 
     parser.add_argument('--data_path', type=str, default="audio_test/",
                         help='path to a file or a folder for prediction')
