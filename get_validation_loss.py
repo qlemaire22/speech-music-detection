@@ -38,6 +38,9 @@ if __name__ == "__main__":
     parser.add_argument('--config', type=str, default="test1",
                         help='the configuration of the training')
 
+    parser.add_argument('--data_location', type=str, default="/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
+                        help='the location of the data')
+
     parser.add_argument('--model', type=str, default="trained/model.hdf5",
                         help='path of the model to load when the starting is resumed')
 
