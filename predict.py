@@ -20,7 +20,7 @@ def test_data_processing(file, mean, std):
     return mels.T
 
 
-def predict(data_path, model_path, mean_path, std_path, smoothing):
+def predict(data_path, output_file, model_path, mean_path, std_path, smoothing):
     mean = np.load(mean_path)
     std = np.load(std_path)
 
@@ -29,11 +29,22 @@ def predict(data_path, model_path, mean_path, std_path, smoothing):
     print("Start the prediction..")
 
     if os.path.isdir(data_path):
-        files = glob.glob(os.path.abspath(data_path) + "/*.npy") + glob.glob(os.path.abspath(data_path) + "/*.wav")
-    else:
-        files = [os.path.abspath(data_path)]
+        if output_file != "":
+            raise ValueError("It is possible to set an output file only if the input is a file.")
 
-    for file in tqdm(files):
+        files = glob.glob(os.path.abspath(data_path) + "/*.npy") + glob.glob(os.path.abspath(data_path) + "/*.wav")
+        for file in tqdm(files):
+            x = test_data_processing(file, mean, std)
+            x = x.reshape((1, x.shape[0], x.shape[1]))
+            output = model.predict(x, batch_size=1, verbose=0)[0].T
+            output = postprocessing.apply_threshold(output)
+            if smoothing:
+                output = postprocessing.smooth_output(output)
+            annotation = preprocessing.label_to_annotation(output)
+            output_path = file.replace(".npy", '') + "_prediction.txt"
+            utils.save_annotation(annotation, output_path)
+    else:
+        file = os.path.abspath(data_path)
         x = test_data_processing(file, mean, std)
         x = x.reshape((1, x.shape[0], x.shape[1]))
         output = model.predict(x, batch_size=1, verbose=0)[0].T
@@ -41,7 +52,10 @@ def predict(data_path, model_path, mean_path, std_path, smoothing):
         if smoothing:
             output = postprocessing.smooth_output(output)
         annotation = preprocessing.label_to_annotation(output)
-        output_path = file.replace(".npy", '') + "_prediction.txt"
+        if output_file != "":
+            output_path = output_file
+        else:
+            output_path = file.replace(".npy", '') + "_prediction.txt"
         utils.save_annotation(annotation, output_path)
 
 
@@ -51,6 +65,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--data_path', type=str, default="audio_test/",
                         help='path to a file or a folder for prediction')
+
+    parser.add_argument('--output_file', type=str, default="",
+                        help='set a name for a precise output file')
 
     parser.add_argument('--model', type=str, default="trained/model.hdf5",
                         help='path of the model to load when the starting is resumed')
@@ -66,4 +83,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    predict(args.data_path, args.model, args.mean_path, args.std_path, args.smoothing)
+    predict(args.data_path, args.output_file, args.model, args.mean_path, args.std_path, args.smoothing)
