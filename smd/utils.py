@@ -83,6 +83,7 @@ def save_annotation(events, filename, dst=None):
         elif events == [["noise"]]:
             f.write("noise")
         else:
+            events = sorted(events, key=lambda x: x[0])
             for event in events:
                 f.write(str(event[0]) + '\t' + str(event[1]) + '\t' + event[2] + '\n')
 
