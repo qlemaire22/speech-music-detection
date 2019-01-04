@@ -21,15 +21,14 @@
     "workers": 8,
     "use_multiprocessing": true
   },
-  "exp2_bconvlstm": {
+  "exp2_cldnn": {
     "model": {
-      "type": "convlstm",
-      "filters_list": [16, 8],
-      "kernel_size_list": [3, 3],
-      "stride_list": [1, 1],
-      "dilation_rate_list": [1, 1],
+      "type": "cldnn",
+      "filters_list": [32, 64],
+      "lstm_units": [25, 50],
+      "fc_units": [15],
+      "kernel_sizes": [3, 3],
       "dropout": 0.351789,
-      "bidirectional": true,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -38,13 +37,13 @@
       }
     },
     "dataset": [
-      "ofai", "muspeak"
+      "muspeak"
     ],
     "batch_size": 32,
     "nb_epoch": 50,
     "target_seq_length": 270,
-    "workers": 8,
-    "use_multiprocessing": true
+    "workers": 1,
+    "use_multiprocessing": false
   },
   "exp3_tcn": {
     "model": {
@@ -306,6 +305,37 @@
     },
     "dataset": [
       "sveriges_radio", "musan", "gtzan", "scheirer_slaney", "ofai", "muspeak", "esc-50"
+    ],
+    "batch_size": 16,
+    "nb_epoch": 50,
+    "target_seq_length": 270,
+    "workers": 8,
+    "use_multiprocessing": true
+  },
+  "test": {
+    "model": {
+      "type": "tcn",
+      "list_n_filters": [64, 64, 64, 16, 64],
+      "kernel_size": 39,
+      "dilations": [1, 2, 4, 8, 16, 32, 64],
+      "nb_stacks": 6,
+      "activation": "norm_relu",
+      "n_layers": 5,
+      "dropout_rate": 0.0397157,
+      "use_skip_connections": false,
+      "bidirectional": true,
+      "optimizer": {
+        "name": "adam",
+        "lr": 0.002,
+        "clipnorm": 1,
+        "beta_1": 0.9,
+        "beta_2": 0.999,
+        "epsilon": null,
+        "decay": 0.0
+      }
+    },
+    "dataset": [
+      "muspeak"
     ],
     "batch_size": 16,
     "nb_epoch": 50,

@@ -3,9 +3,9 @@
 from __future__ import absolute_import
 
 from . import lstm
-from . import conv_lstm
+from . import cldnn
 from . import tcn
 
 from .model_loader import load_model, compile_model
 
-__all__ = ['lstm', 'conv_lstm', 'tcn', 'load_model', 'compile_model']
+__all__ = ['lstm', 'cldnn', 'tcn', 'load_model', 'compile_model']

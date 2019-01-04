@@ -119,16 +119,15 @@ Here are the architectures already implemented with their configuration:
       "optimizer": ...
     }
 
-#### ConvLSTM
+#### CLDNN (Convolutional, Long Short-Term Memory, Fully Connected Deep Neural Networks)
 
     "model": {
-      "type": "convlstm",
-      "filters_list": [50, 50],
-      "kernel_size_list": [3, 3],
-      "stride_list": [1, 1],
-      "dilation_rate_list": [1, 1],
-      "dropout": 0.2,
-      "bidirectional": true,
+      "type": "cldnn",
+      "filters_list": [32, 64],
+      "lstm_units": [25, 50],
+      "fc_units": [15],
+      "kernel_sizes": [3, 5],
+      "dropout": 0.351789,
       "optimizer": ...
     }
 

@@ -1,22 +1,21 @@
 from smd import config
 from smd.models.lstm import create_lstm
 from smd.models.tcn import create_tcn
-from smd.models.conv_lstm import create_conv_lstm
+from smd.models.cldnn import create_cldnn
 from keras import optimizers
 
 
 def load_model(cfg):
-
     if cfg["type"] == "lstm":
         model = create_lstm(hidden_units=cfg["hidden_units"],
                             dropout=cfg["dropout"],
                             bidirectional=cfg["bidirectional"])
-    elif cfg["type"] == "convlstm":
-        model = create_conv_lstm(hidden_units=cfg["hidden_units"],
-                                 filters=cfg["filters"],
-                                 kernel_size=cfg["kernel_size"],
-                                 dropout=cfg["dropout"],
-                                 bidirectional=cfg["bidirectional"])
+    elif cfg["type"] == "cldnn":
+        model = create_cldnn(filters_list=cfg["filters_list"],
+                             lstm_units=cfg["lstm_units"],
+                             fc_units=cfg["fc_units"],
+                             kernel_sizes=cfg["kernel_sizes"],
+                             dropout=cfg["dropout"])
     elif cfg["type"] == "tcn":
         model = create_tcn(list_n_filters=cfg["list_n_filters"],
                            kernel_size=cfg["kernel_size"],

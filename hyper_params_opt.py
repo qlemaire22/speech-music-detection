@@ -4,7 +4,7 @@ from hyperopt import Trials, STATUS_OK, tpe
 from hyperas import optim
 from hyperas.distributions import choice, uniform, conditional
 
-from smd.models import tcn, lstm, conv_lstm
+from smd.models import tcn, lstm, cldnn
 import smd.config as config
 import smd.utils as utils
 from smd.data.data_generator import DataGenerator
@@ -80,14 +80,15 @@ def data():
     return train_set, val_set
 
 
-def fit_b_lstm(train_set, val_set):
+def fit_lstm(train_set, val_set):
     global n_eval
 
     n_eval += 1
     print(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval))
 
     with open("hyper_opt_result.txt", 'a') as f:
-        f.write(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval) + "\n")
+        f.write(str(datetime.datetime.now()) +
+                ": iteration number: " + str(n_eval) + "\n")
 
     cfg = {"optimizer":
            {
@@ -115,7 +116,8 @@ def fit_b_lstm(train_set, val_set):
                 layers.append(
                     {{choice([25, 50, 75, 100, 125, 150, 175, 200, 225, 250])}})
 
-    model = lstm.create_lstm(hidden_units=layers, dropout={{uniform(0.05, 0.5)}}, bidirectional=True)
+    model = lstm.create_lstm(hidden_units=layers, dropout={
+                             {uniform(0.05, 0.5)}}, bidirectional=True)
 
     n_params = model.count_params()
     print(n_params)
@@ -157,14 +159,15 @@ def fit_b_lstm(train_set, val_set):
     return {'loss': validation_loss, 'status': STATUS_OK}
 
 
-def fit_b_conv_lstm(train_set, val_set):
+def fit_cldnn(train_set, val_set):
     global n_eval
 
     n_eval += 1
     print(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval))
 
     with open("hyper_opt_result.txt", 'a') as f:
-        f.write(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval) + "\n")
+        f.write(str(datetime.datetime.now()) +
+                ": iteration number: " + str(n_eval) + "\n")
 
     cfg = {"optimizer":
            {
@@ -177,37 +180,43 @@ def fit_b_conv_lstm(train_set, val_set):
            "use_multiprocessing": True,
            "n_epochs": 5
            }
-    n_layer = {{choice([1, 2, 3, 4])}}
-    filters_list = []
-    kernel_size_list = []
-    stride_list = []
-    dilation_rate_list = []
 
-    filters_list.append({{choice([8, 16, 32])}})
-    kernel_size_list.append({{choice([1, 3, 5])}})
-    stride_list.append(1)
-    dilation_rate_list.append(1)
-    if conditional(n_layer) >= 2:
-        filters_list.append({{choice([8, 16, 32])}})
-        kernel_size_list.append({{choice([1, 3, 5])}})
-        stride_list.append(1)
-        dilation_rate_list.append(1)
-        if conditional(n_layer) >= 3:
-            filters_list.append({{choice([8, 16, 32])}})
-            kernel_size_list.append({{choice([1, 3, 5])}})
-            stride_list.append(1)
-            dilation_rate_list.append(1)
-            if conditional(n_layer) >= 4:
-                filters_list.append({{choice([8, 16, 32])}})
-                kernel_size_list.append({{choice([1, 3, 5])}})
-                stride_list.append(1)
-                dilation_rate_list.append(1)
+    n_layer_c = {{choice([1, 2, 3])}}
+    n_layer_l = {{choice([1, 2, 3])}}
+    n_layer_d = {{choice([1, 2, 3])}}
 
-    model = b_conv_lstm.create_b_conv_lstm(filters_list=filters_list,
-                                           kernel_size_list=kernel_size_list,
-                                           stride_list=stride_list,
-                                           dilation_rate_list=dilation_rate_list,
-                                           dropout={{uniform(0.05, 0.5)}})
+    filters_list = [],
+    lstm_units = [],
+    fc_units = [],
+    kernel_sizes = [],
+
+    filters_list.append({{choice([8, 16, 32, 64])}})
+    kernel_sizes.append({{choice([1, 3, 5, 9])}})
+    if conditional(n_layer_c) >= 2:
+        filters_list.append({{choice([8, 16, 32, 64])}})
+        kernel_sizes.append({{choice([1, 3, 5, 9])}})
+        if conditional(n_layer_c) >= 3:
+            filters_list.append({{choice([8, 16, 32, 64])}})
+            kernel_sizes.append({{choice([1, 3, 5, 9])}})
+
+    lstm_units.append({{choice([25, 50, 75, 100, 125, 150])}})
+    if conditional(n_layer_l) >= 2:
+        lstm_units.append({{choice([25, 50, 75, 100, 125, 150])}})
+        if conditional(n_layer_l) >= 3:
+            lstm_units.append({{choice([25, 50, 75, 100, 125, 150])}})
+
+    fc_units.append({{choice([25, 50, 75, 100, 125, 150])}})
+    if conditional(n_layer_d) >= 2:
+        fc_units.append({{choice([25, 50, 75, 100, 125, 150])}})
+        if conditional(n_layer_d) >= 3:
+            fc_units.append({{choice([25, 50, 75, 100, 125, 150])}})
+
+    model = cldnn.create_cldnn(filters_list=filters_list,
+                               lstm_units=lstm_units,
+                               fc_units=fc_units,
+                               kernel_sizes=kernel_sizes,
+                               dropout={{uniform(0.05, 0.5)}},
+                               bidirectional=False)
     n_params = model.count_params()
     print(n_params)
     print(space)
@@ -238,7 +247,7 @@ def fit_b_conv_lstm(train_set, val_set):
     csv_line = [n_eval, n_params, validation_loss]
     for key in space.keys():
         csv_line.append(space[key])
-    with open(r'fit_b_conv_lstm_log.csv', 'a') as f:
+    with open(r'fit_cldnn_log.csv', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(csv_line)
 
@@ -255,7 +264,8 @@ def fit_tcn(train_set, val_set):
     print(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval))
 
     with open("hyper_opt_result.txt", 'a') as f:
-        f.write(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval) + "\n")
+        f.write(str(datetime.datetime.now()) +
+                ": iteration number: " + str(n_eval) + "\n")
 
     cfg = {"optimizer":
            {
@@ -337,14 +347,15 @@ def fit_tcn(train_set, val_set):
     return {'loss': validation_loss, 'status': STATUS_OK}
 
 
-def fit_b_tcn(train_set, val_set):
+def fit_nc_tcn(train_set, val_set):
     global n_eval
 
     n_eval += 1
     print(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval))
 
     with open("hyper_opt_result.txt", 'a') as f:
-        f.write(str(datetime.datetime.now()) + ": iteration number: " + str(n_eval) + "\n")
+        f.write(str(datetime.datetime.now()) +
+                ": iteration number: " + str(n_eval) + "\n")
 
     cfg = {"optimizer":
            {
@@ -361,7 +372,8 @@ def fit_b_tcn(train_set, val_set):
            "n_epochs": 7
            }
     nb_filters = []
-    kernel_size = {{choice([11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41])}}
+    kernel_size = {
+        {choice([11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41])}}
     dilations = {{choice([[2 ** i for i in range(4)],
                           [2 ** i for i in range(5)],
                           [2 ** i for i in range(6)],
@@ -402,7 +414,8 @@ def fit_b_tcn(train_set, val_set):
             f.write(str(key) + " " + str(space[key]) + " ")
             f.write('\n')
 
-    optimizer = optimizers.adam(lr=cfg["optimizer"]["lr"], clipnorm=cfg["optimizer"]["clipnorm"])
+    optimizer = optimizers.adam(
+        lr=cfg["optimizer"]["lr"], clipnorm=cfg["optimizer"]["clipnorm"])
 
     model.compile(loss=config.LOSS, metrics=config.METRICS,
                   optimizer=optimizer)
@@ -440,7 +453,7 @@ if __name__ == '__main__':
 
     t0 = time.time()
 
-    best_run = optim.minimize(model=fit_b_tcn,
+    best_run = optim.minimize(model=fit_nc_tcn,
                               data=data,
                               algo=tpe.suggest,
                               max_evals=MAX_EVALS,
