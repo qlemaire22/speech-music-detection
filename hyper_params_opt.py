@@ -185,19 +185,19 @@ def fit_cldnn(train_set, val_set):
     n_layer_l = {{choice([1, 2, 3])}}
     n_layer_d = {{choice([1, 2, 3])}}
 
-    filters_list = [],
-    lstm_units = [],
-    fc_units = [],
-    kernel_sizes = [],
+    filters_list = []
+    lstm_units = []
+    fc_units = []
+    kernel_sizes = []
 
-    filters_list.append({{choice([8, 16, 32, 64])}})
-    kernel_sizes.append({{choice([1, 3, 5, 9])}})
+    filters_list.append({{choice([8, 16, 32, 64, 128])}})
+    kernel_sizes.append({{choice([3, 5, 9, 11])}})
     if conditional(n_layer_c) >= 2:
-        filters_list.append({{choice([8, 16, 32, 64])}})
-        kernel_sizes.append({{choice([1, 3, 5, 9])}})
+        filters_list.append({{choice([8, 16, 32, 64, 128])}})
+        kernel_sizes.append({{choice([3, 5, 9, 11])}})
         if conditional(n_layer_c) >= 3:
-            filters_list.append({{choice([8, 16, 32, 64])}})
-            kernel_sizes.append({{choice([1, 3, 5, 9])}})
+            filters_list.append({{choice([8, 16, 32, 64, 128])}})
+            kernel_sizes.append({{choice([3, 5, 9, 11])}})
 
     lstm_units.append({{choice([25, 50, 75, 100, 125, 150])}})
     if conditional(n_layer_l) >= 2:
@@ -453,7 +453,7 @@ if __name__ == '__main__':
 
     t0 = time.time()
 
-    best_run = optim.minimize(model=fit_nc_tcn,
+    best_run = optim.minimize(model=fit_cldnn,
                               data=data,
                               algo=tpe.suggest,
                               max_evals=MAX_EVALS,

@@ -3,7 +3,7 @@ import dcase_util
 from tqdm import tqdm
 
 
-def eval(ground_truth_events, predicted_events, segment_length=0.01, event_tolerance=0.2):
+def eval(ground_truth_events, predicted_events, segment_length=0.01, event_tolerance=0.2, offset=False):
     r"""
         Evaluate the output of the network.
 
@@ -95,7 +95,7 @@ def eval(ground_truth_events, predicted_events, segment_length=0.01, event_toler
             t_collar=event_tolerance,
             percentage_of_length=0.,
             evaluate_onset=True,
-            evaluate_offset=False
+            evaluate_offset=offset
         )
 
     for file_pair in tqdm(data):

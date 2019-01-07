@@ -1,7 +1,7 @@
 from smd import config
 
 
-def smooth_output(output, min_speech=0.5, min_music=2, max_silence_speech=2, max_silence_music=2):
+def smooth_output(output, min_speech=1.3, min_music=3.4, max_silence_speech=0.4, max_silence_music=0.6):
     duration_frame = config.HOP_LENGTH / config.SAMPLING_RATE
     n_frame = output.shape[1]
 

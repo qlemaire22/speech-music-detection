@@ -26,7 +26,8 @@ def get_statistics(dataset):
             if event[2] == "speech":
                 speech_events.append(event[1] - event[0])
                 if not(last_speech is None):
-                    speech_breaks.append(event[0] - last_speech)
+                    if event[0] - last_speech > 0:
+                        speech_breaks.append(event[0] - last_speech)
                 last_speech = event[1]
             else:
                 music_events.append(event[1] - event[0])
