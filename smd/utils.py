@@ -4,7 +4,13 @@ import json
 import csv
 import math
 import smd.config as config
-import librosa
+import librosa as _librosa
+from presets import Preset
+
+librosa = Preset(_librosa)
+librosa['sr'] = config.SAMPLING_RATE
+librosa['hop_length'] = config.HOP_LENGTH
+librosa['n_fft'] = config.FFT_WINDOW_SIZE
 
 
 def read_filelists(folder):
@@ -43,7 +49,7 @@ def read_annotation(filename):
 
 def load_audio(filename, duration=None):
     """Load the audio file into a numpy array."""
-    return librosa.load(filename, sr=None, duration=duration)[0]
+    return librosa.load(filename, duration=duration)[0]
 
 
 def save_matrix(spec, filename, dst=None):
