@@ -25,8 +25,8 @@
     "model": {
       "type": "cldnn",
       "filters_list": [16, 64],
-      "lstm_units": [50],
-      "fc_units": [25],
+      "lstm_units": [150],
+      "fc_units": [150],
       "kernel_sizes": [9, 9],
       "dropout": 0.131857,
       "optimizer": {
