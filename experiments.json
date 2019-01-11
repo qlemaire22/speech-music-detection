@@ -42,8 +42,8 @@
     "batch_size": 32,
     "nb_epoch": 50,
     "target_seq_length": 270,
-    "workers": 1,
-    "use_multiprocessing": false
+    "workers": 8,
+    "use_multiprocessing": true
   },
   "exp3_tcn": {
     "model": {
