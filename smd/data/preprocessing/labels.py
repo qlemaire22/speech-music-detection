@@ -113,7 +113,7 @@ def label_to_annotation_extended(label):
             t1_none = frame_to_time(i)
         elif (label[1][i] == 1 or label[0][i] == 1) and t1_none != -1:
             t2_none = frame_to_time(i)
-            events.append([str(t1_none), str(t2_none), "none"])
+            events.append([str(t1_none), str(t2_none), "nothing"])
             t1_none = -1
             t2_none = -1
 
@@ -137,7 +137,7 @@ def label_to_annotation_extended(label):
 
     if t1_none != -1:
         t2_none = frame_to_time(len(label[0]))
-        events.append([str(t1_none), str(t2_none), "none"])
+        events.append([str(t1_none), str(t2_none), "nothing"])
         t1_none = -1
         t2_none = -1
 
