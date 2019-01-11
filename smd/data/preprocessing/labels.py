@@ -71,6 +71,79 @@ def label_to_annotation(label):
     return events
 
 
+def label_to_annotation_extended(label):
+    """Return the formatted annotations based on the label matrix."""
+    t1_music = -1
+    t1_speech = -1
+    t2_music = -1
+    t2_speech = -1
+    t1_both = -1
+    t1_none = -1
+    t2_both = -1
+    t2_none = -1
+
+    events = []
+
+    for i in range(len(label[0])):
+        if label[0][i] == 1 and t1_speech == -1:
+            t1_speech = frame_to_time(i)
+        elif label[0][i] == 0 and t1_speech != -1:
+            t2_speech = frame_to_time(i)
+            events.append([str(t1_speech), str(t2_speech), "speech"])
+            t1_speech = -1
+            t2_speech = -1
+
+        if label[1][i] == 1 and t1_music == -1:
+            t1_music = frame_to_time(i)
+        elif label[1][i] == 0 and t1_music != -1:
+            t2_music = frame_to_time(i)
+            events.append([str(t1_music), str(t2_music), "music"])
+            t1_music = -1
+            t2_music = -1
+
+        if label[1][i] == 1 and label[0][i] == 1 and t1_both == -1:
+            t1_both = frame_to_time(i)
+        elif (label[1][i] == 0 or label[0][i] == 0) and t1_both != -1:
+            t2_both = frame_to_time(i)
+            events.append([str(t1_both), str(t2_both), "both"])
+            t1_both = -1
+            t2_both = -1
+
+        if label[1][i] == 0 and label[0][i] == 0 and t1_none == -1:
+            t1_none = frame_to_time(i)
+        elif (label[1][i] == 1 or label[0][i] == 1) and t1_none != -1:
+            t2_none = frame_to_time(i)
+            events.append([str(t1_none), str(t2_none), "none"])
+            t1_none = -1
+            t2_none = -1
+
+    if t1_speech != -1:
+        t2_speech = frame_to_time(len(label[0]))
+        events.append([str(t1_speech), str(t2_speech), "speech"])
+        t1_speech = -1
+        t2_speech = -1
+
+    if t1_music != -1:
+        t2_music = frame_to_time(len(label[0]))
+        events.append([str(t1_music), str(t2_music), "music"])
+        t1_music = -1
+        t2_music = -1
+
+    if t1_both != -1:
+        t2_both = frame_to_time(len(label[0]))
+        events.append([str(t1_both), str(t2_both), "both"])
+        t1_both = -1
+        t2_both = -1
+
+    if t1_none != -1:
+        t2_none = frame_to_time(len(label[0]))
+        events.append([str(t1_none), str(t2_none), "none"])
+        t1_none = -1
+        t2_none = -1
+
+    return events
+
+
 def time_to_frame(time):
     """Return the number of the frame corresponding to a timestamp."""
     n_frame = round(time / config.HOP_LENGTH * config.SAMPLING_RATE)

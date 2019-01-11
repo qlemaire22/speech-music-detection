@@ -22,7 +22,7 @@ def test_data_processing(spec_file, annotation_file, mean, std):
     return mels, label
 
 
-def evaluate(test_set, cfg, config_name, model_path, save_path, smoothing):
+def evaluate(test_set, cfg, config_name, model_path, save_path, smoothing, extended):
     print("Loading the model " + model_path + "..")
     model = keras.models.load_model(model_path)
 
@@ -46,9 +46,14 @@ def evaluate(test_set, cfg, config_name, model_path, save_path, smoothing):
     predictions_events = []
     ground_truth_events = []
 
-    for p, gt in zip(predictions, ground_truth):
-        predictions_events.append(preprocessing.label_to_annotation(p))
-        ground_truth_events.append(preprocessing.label_to_annotation(gt))
+    if not(extended):
+        for p, gt in zip(predictions, ground_truth):
+            predictions_events.append(preprocessing.label_to_annotation(p))
+            ground_truth_events.append(preprocessing.label_to_annotation(gt))
+    else:
+        for p, gt in zip(predictions, ground_truth):
+            predictions_events.append(preprocessing.label_to_annotation_extended(p))
+            ground_truth_events.append(preprocessing.label_to_annotation_extended(gt))
 
     print("Evaluation..")
 
@@ -84,6 +89,9 @@ if __name__ == "__main__":
     parser.add_argument('--smoothing', type=int, default=1,
                         help='0 or 1, apply to smoothing function to the ouput')
 
+    parser.add_argument('--extended', type=int, default=0,
+                        help='0 or 1, take both and none into the evaluation')
+
     args = parser.parse_args()
 
     experiments = utils.load_json('experiments.json')
@@ -108,4 +116,8 @@ if __name__ == "__main__":
     if args.smoothing == 1:
         smoothing = True
 
-    evaluate(test_set, cfg, args.config, args.model, args.save_path, smoothing)
+    extended = False
+    if args.extended == 1:
+        extended = True
+
+    evaluate(test_set, cfg, args.config, args.model, args.save_path, smoothing, extended)
