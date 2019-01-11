@@ -24,11 +24,11 @@
   "exp2_cldnn": {
     "model": {
       "type": "cldnn",
-      "filters_list": [32, 64],
-      "lstm_units": [25, 50],
-      "fc_units": [15],
-      "kernel_sizes": [3, 3],
-      "dropout": 0.351789,
+      "filters_list": [16, 64],
+      "lstm_units": [50],
+      "fc_units": [25],
+      "kernel_sizes": [9, 9],
+      "dropout": 0.131857,
       "optimizer": {
         "name": "SGD",
         "lr": 0.001,
@@ -37,7 +37,7 @@
       }
     },
     "dataset": [
-      "muspeak"
+      "ofai", "muspeak"
     ],
     "batch_size": 32,
     "nb_epoch": 50,
