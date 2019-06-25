@@ -1,4 +1,0 @@
-0	1	music
-1.2345	3.23233	speech
-2.26	9.56	music
-8.43	9.11	speech

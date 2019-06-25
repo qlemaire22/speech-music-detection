@@ -35,7 +35,7 @@ def evaluate(test_set, cfg, config_name, model_path, save_path, smoothing, exten
         x, y = test_set.__getitem__(i)
         x = x.reshape((1, x.shape[0], x.shape[1]))
         output = model.predict(x, batch_size=1, verbose=0)[0].T
-        output = postprocessing.apply_threshold(output)
+        output = postprocessing.apply_threshold(output, speech_threshold=0.78, music_threshold=0.88)
         if smoothing:
             output = postprocessing.smooth_output(output)
         predictions.append(output)
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Script to train a neural network for speech and music detection.")
 
-    parser.add_argument('--config', type=str, default="test3",
+    parser.add_argument('--config', type=str, default="high_quality",
                         help='the configuration of the training')
 
     parser.add_argument('--save_path', type=str, default=".",
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_location', type=str, default="/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
                         help='the location of the data')
 
-    parser.add_argument('--model', type=str, default="trained/model.hdf5",
+    parser.add_argument('--model', type=str, default="trained/model.h5",
                         help='path of the model to load when the starting is resumed')
 
     parser.add_argument('--mean_path', type=str, default="trained/mean.npy",

@@ -27,6 +27,7 @@ def get_validation_loss(val_set, model_path, cfg):
                                       workers=cfg["workers"],
                                       use_multiprocessing=cfg["use_multiprocessing"],
                                       verbose=1)
+
     print("Final result:")
     print(result)
 
@@ -35,7 +36,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Script to train a neural network for speech and music detection.")
 
-    parser.add_argument('--config', type=str, default="test1",
+    parser.add_argument('--config', type=str, default="high_quality",
                         help='the configuration of the training')
 
     parser.add_argument('--data_location', type=str, default="/Users/quentin/Computer/DataSet/Music/speech_music_detection/",
