@@ -35,7 +35,7 @@ def evaluate(test_set, cfg, config_name, model_path, save_path, smoothing, exten
         x, y = test_set.__getitem__(i)
         x = x.reshape((1, x.shape[0], x.shape[1]))
         output = model.predict(x, batch_size=1, verbose=0)[0].T
-        output = postprocessing.apply_threshold(output, speech_threshold=0.78, music_threshold=0.88)
+        output = postprocessing.apply_threshold(output)
         if smoothing:
             output = postprocessing.smooth_output(output)
         predictions.append(output)
