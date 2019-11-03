@@ -2,6 +2,8 @@
 
 Python framework for Speech and Music Detection using Keras.
 
+This repository contains the experiments presented in the paper "Temporal Convolutional Networks for Speech and Music Detection in Radio Broadcast" by Quentin Lemaire and Andre Holzapfel at the 20th International Society for Music Information Retrieval conference (ISMIR 2019). [Paper](http://archives.ismir.net/ismir2019/paper/000026.pdf)
+
 ## Description
 
 This framework is designed to easily evaluate new models and configurations for the speech and music detection task using neural networks. More details about this task can be found in the description page for the [MIREX 2018 Speech/Music Detection task](https://www.music-ir.org/mirex/wiki/2018:Music_and/or_Speech_Detection). The evaluation implemented in this framework is the same as the one described in this page for comparison purposes.
