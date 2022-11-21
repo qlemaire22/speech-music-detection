@@ -10,4 +10,4 @@ sed_eval==0.2.1
 keras-tcn==2.3.3
 hyperopt==0.1.1
 hyperas==0.4
-tensorflow==1.14.0
+tensorflow==2.9.3
